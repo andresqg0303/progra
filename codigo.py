@@ -50,7 +50,6 @@ def mainMenu():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-                sys.exit()
         root.blit(Menu, (0, 0))
         #Boton(msg,x,y,w,h,ic,ac)
         Boton("PVP",355,240,100,50,LightGrey, Grey)
