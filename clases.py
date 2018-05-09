@@ -111,11 +111,11 @@ class Bola:
 
 class Juego:
     nivel = 1
-    Matriz = []
+    Matriz = ['25x40']
     Score: 0
     Timer = 0
     Cantidad de barras = 1
-    PVP = True
+    PVC = True
 
     
     barra = None
@@ -127,7 +127,7 @@ class Juego:
     def set_Bola(self, color,tamaño,velocidad,posicion):
         self.bola = bola
 
-    def set_nicel(self):
+    def set_nivel(self):
         #Definir
 
     def set_score(self):
@@ -144,8 +144,6 @@ class Juego:
 
     def game_over(self):
         #Definir
-
-
 
 
 
