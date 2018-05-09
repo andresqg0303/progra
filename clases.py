@@ -8,11 +8,8 @@
 # Posición: tuple
 #Métodos:
 # GetPos()
-# SetPos()
 # GetSpeed()
-# SetSpeed()
 # GerColor()
-# SetColor()
 # GetTamaño()
 # MoverBarra()
 
@@ -20,6 +17,25 @@ class Barra:
     color= ''
     tamaño= ''
     velocidad= 10
-    posición= ''
+    posicion= ''
 
-    def __init__(self, color,tamaño,velocidad,posición)
+    def __init__(self, color,tamaño,velocidad,posicion):
+        self.color = color
+        self.tamaño = tamaño
+        self.velocidad = velocidad
+        self.posicion = posicion
+
+    def GetColor(self):
+        return self.color=color
+    
+    def GetSpeed(self):
+        return self.velocidad = velocidad
+
+    def GetPos(self):
+        return self.posición = posición
+
+    def GetTamaño(self):
+        return self.tamaño = tamaño
+    
+
+    
