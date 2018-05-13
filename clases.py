@@ -167,7 +167,6 @@ class Bola:
     def Dirección(self):
         #Definir
 
-hola 
 
 
 
