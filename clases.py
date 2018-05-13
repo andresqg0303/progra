@@ -1,5 +1,3 @@
-# coding=utf-8
-import pygame
 import time
 import random
 
@@ -169,7 +167,7 @@ class Bola:
     def Dirección(self):
         #Definir
 
-
+hola 
 
 
 
