@@ -114,10 +114,10 @@ class Juego:
     def getMatriz(self):
         return self.matriz
     def winner(self):
-        if score1-2>=score2 and score1 >= 10:
+        if self.score1-2>=self.score2 and self.score1 >= 10:
             self.win1 += 1
             self.nivel += 1
-        elif score2-2>=score1 and score2 >= 10:
+        elif self.score2-2>=self.score1 and self.score2 >= 10:
             self.win2 += 1
             self.nivel += 1
     def game_over(self):
