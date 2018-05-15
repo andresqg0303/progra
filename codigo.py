@@ -2,7 +2,6 @@ import pygame
 import random
 import time
 
-
 pygame.init()
 fps= pygame.time.Clock()
 Width= 800
@@ -52,8 +51,8 @@ def mainMenu():
                 quit()
         root.blit(Menu, (0, 0))
         #Boton(msg,x,y,w,h,ic,ac)
-        Boton("PVP",355,240,100,50,LightGrey, Grey)
-        Boton("PVC", 355, 320, 100, 50, LightGrey, Grey)
+        Boton1 = Boton("PVP",355,240,100,50,LightGrey, Grey)
+        Boton2= Boton("PVC", 355, 320, 100, 50, LightGrey, Grey)
         pygame.display.update()
         fps.tick()
 

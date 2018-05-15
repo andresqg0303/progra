@@ -1,5 +1,4 @@
 import time
-import random
 
         # 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
 Matriz= [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -92,7 +91,15 @@ class Juego:
     def get_score(self):
         return (self.score1,self.score2)
     def update(self):
-        self.matriz= Matriz
+        for i in range(self.tamanoMatriz[0]):
+            print(" ")
+            for j in range(self.tamanoMatriz[1]):
+                Posi = self.matriz[i][j]
+                if type(Posi) != type(0):
+                    print(Posi, " ", end="")
+                    continue
+                print (Posi, "  ", end="")
+        print(" ")
     def cronometro(self):
         while self.timer >= 0:
             self.timer += 1
@@ -138,7 +145,7 @@ class Juego:
 # ColocarBarras()
 
 class Barra:
-    def __init__(self, color= (255,255,255),tamano= 9,velocidad= 7,posicion= (0,8)):
+    def __init__(self, color= (255,255,255),tamano= 9,velocidad= 7,posicion= [8,0]):
         self.color = color
         self.tamano = tamano
         self.velocidad = velocidad
@@ -151,15 +158,19 @@ class Barra:
         return self.posicion
     def GetTamano(self):
         return self.tamano
-    def SetPos(self,nuevaPos_Tuple_):
-        self.posicion= nuevaPos_Tuple_
-    def MoverBarra(self,moverY):
-        
-        for i in range(self.posicion[1], self.posicion[1]+self.tamano,1):
-            Matriz[i][0] += 1
+    def SetPos(self,nuevaPos_Lista_):
+        self.posicion= nuevaPos_Lista_
     def colocarBarras(self):
-        for i in range(self.posicion[1], self.posicion[1]+self.tamano,1):
-            Matriz[i][0] += 1
+        for i in range(self.posicion[0], self.posicion[0]+self.tamano,1):
+            j= self.posicion[1]
+            Matriz[i][j]= 1
+    def MoverBarra(self,moverY):
+        for i in range(self.posicion[0], self.posicion[0]+self.tamano,1):
+            j= self.posicion[1]
+            Matriz[i][j]= 0
+        self.posicion[0] += moverY
+        self.colocarBarras()
+
 #___________________________________________________________
 
 #Bola
@@ -177,31 +188,26 @@ class Barra:
 # Mover()
 
 class Bola:
-    color= (0, 0, 0)
-    tamano= (20,20)
-    velocidad= 20
-    posicion= ''
-
-    def __init__(self, color,tamano,velocidad,posicion):
+    def __init__(self, color= (255,255,255),tamano= (20,20),velocidad= 3,posicion=[12,19]):
         self.color = color
         self.tamano = tamano
         self.velocidad = velocidad
         self.posicion = posicion
-
     def GetColor(self):
         return self.color
-    
     def GetSpeed(self):
         return self.velocidad
-
     def GetPos(self):
         return self.posicion
-
     def GetTamano(self):
         return self.tamano
-
-    def Mover(self):
-        pass
+    def colocar(self):
+        Matriz[self.posicion[0]][self.posicion[1]]= 1
+    def Mover(self,MoverX,MoverY):
+        Matriz[self.posicion[0]][self.posicion[1]] = 0
+        self.posicion[0] += MoverX
+        self.posicion[1] += MoverY
+        self.colocar()
 
 
 
