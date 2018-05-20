@@ -69,8 +69,6 @@ ________________________________________________________________________________
 # creaMatriz()
 
 class Juego:
-    win1= 0
-    win2= 0
     def __init__(self,matriz=Matriz,nivel=1,PVC=True,barras=1,timer=0,score1=0,score2=0,tamanoMatriz=(25,40)):
         self.matriz = matriz
         self.tamanoMatriz= tamanoMatriz
@@ -80,6 +78,8 @@ class Juego:
         self.timer = timer
         self.score1 = score1
         self.score2 = score2
+        self.win1 = 0
+        self.win2 = 0
     def start(self):
         for i in range(self.tamanoMatriz[0]):
             print(" ")
@@ -94,15 +94,16 @@ class Juego:
         return self.nivel
     def set_score1(self):
         self.score1 +=1
-        pygame.mixer.music.load("Punto.mp3")
-        pygame.mixer.music.play(1)
     def restart_Score(self):
         self.score1 = 0
         self.score2 = 0
+    def restartGameAux(self):
+        self.score1 = 0
+        self.score2 = 0
+        self.win1 = 0
+        self.win2 = 0
     def set_score2(self):
         self.score2 +=1
-        pygame.mixer.music.load("Punto.mp3")
-        pygame.mixer.music.play(1)
     def get_matriz(self):
         return self.matriz
     def set_barras(self,Cantidad):
@@ -119,6 +120,10 @@ class Juego:
         return self.score1
     def get_score2(self):
         return self.score2
+    def get_win1(self):
+        return self.win1
+    def get_win2(self):
+        return self.win2
     def creaMatriz(self):
         self.matriz= []
         for i in range(0,self.tamanoMatriz[0],1):
@@ -142,6 +147,11 @@ class Juego:
                 return ("Player 1 won")
             elif self.nivel > 3 and self.win2 >= 2:
                 return ("Player 2 won")
+        if self.PVC== True:
+            if self.nivel > 3 and self.win1 >= 2:
+                return ("Player 1 won")
+            elif self.nivel > 3 and self.win2 >= 2:
+                return ("CPU won")
 #_______________________________________________________________________________________________________________________
 
 """Barra"""
@@ -262,9 +272,6 @@ Height= 500
 root= pygame.display.set_mode((Width,Height))
 pygame.display.set_caption("Pong")
 
-#Música de fondo del menú
-pygame.mixer.music.load("menu3.mp3")
-pygame.mixer.music.play(20)
 
 #Colores________________________________________________________________________________________________________________
 Black= (0, 0, 0)
@@ -282,6 +289,7 @@ Yellow= (250, 195, 15)
 pygame.key.set_repeat(1,40)
 
 Menu= pygame.image.load("Menu.jpg")
+End= pygame.image.load("GameOver.jpg")
 
 def ObjetosTexto(text, font):
     SuperficieTexto = font.render(text, True, White)
@@ -289,6 +297,7 @@ def ObjetosTexto(text, font):
 def Boton(msg,x,y,w,h,ic,ac,command= None):
     global Inicio
     global Mode
+    global Winner
     mouse = pygame.mouse.get_pos()
     click= pygame.mouse.get_pressed()
     if x+w > mouse[0] > x and y+h > mouse[1] > y:
@@ -313,6 +322,15 @@ def Boton(msg,x,y,w,h,ic,ac,command= None):
             Game.set_barras(2)
             Mode = False
             mainloop()
+        elif click[0] == 1 and command == "Restart":
+            Winner = False
+            Game.restartGameAux()
+            Inicio= True
+            mainMenu()
+        elif click[0] == 1 and command == "Quit":
+            Winner = False
+            pygame.quit()
+            quit()
     else:
         pygame.draw.rect(root, ic,(x,y,w,h))
     smallText = pygame.font.Font("freesansbold.ttf",20)
@@ -327,10 +345,16 @@ def VisualObjetos():
                     pygame.draw.rect(root,White,(j*20,i*20,20,20))
                 if 0<j<39:
                     pygame.draw.circle(root,White,(j*20,i*20),15,15)
-def Mensajes(texto,lado):
+def Puntuaciones(texto,lado):
     smallText = pygame.font.Font('freesansbold.ttf',60)
     TextSurf, TextRect = ObjetosTexto(texto, smallText)
     TextRect.center = ((Height/10)*lado,(Width/20))
+    root.blit(TextSurf, TextRect)
+    pygame.display.update()
+def Mensajes(texto):
+    smallText = pygame.font.Font('freesansbold.ttf',40)
+    TextSurf, TextRect = ObjetosTexto(texto, smallText)
+    TextRect.center = ((400),(300))
     root.blit(TextSurf, TextRect)
     pygame.display.update()
 def MoverBola(Velocidad):
@@ -346,110 +370,70 @@ def Colision():
     PosPa4 = Paleta4.GetPos()
     if Posicion[0] == 0:
         VectorBolay *= -1
-        pygame.mixer.music.load("golpe.mp3")
-        pygame.mixer.music.play(1)
     elif Posicion[0] == 24:
-        pygame.mixer.music.load("golpe.mp3")
-        pygame.mixer.music.play(1)
         VectorBolay *= -1
     if Game.get_barras() == 1:
         #PALETA 1_____________________________________________________________
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/3 > Posicion[0] >= PosPa1[0]:
             VectorBolax = 1
             VectorBolay = -1
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
             VectorBolax = 1
             VectorBolay = 0
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+(Paleta1.GetTamano()*2)/3:
             VectorBolax= 1
             VectorBolay= 1
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         #PALETA 2_____________________________________________________________
         if Posicion[1] == PosPa2[1]-1 and PosPa2[0]+Paleta2.GetTamano()/3 > Posicion[0] >= PosPa2[0]:
             VectorBolax = -1
             VectorBolay = -1
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa2[1]-1 and PosPa2[0]+(Paleta2.GetTamano()*2)/3 > Posicion[0] >= PosPa2[0]+Paleta2.GetTamano()/3:
             VectorBolax = -1
             VectorBolay = 0
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa2[1]-1 and PosPa2[0]+Paleta2.GetTamano() > Posicion[0] >= PosPa2[0]+(Paleta2.GetTamano()*2)/3:
             VectorBolax= -1
             VectorBolay= 1
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
     if Game.get_barras() == 2:
         #PALETA 1______________________________________________________________
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/3 > Posicion[0] >= PosPa1[0]:
             VectorBolax = 1
             VectorBolay = -1
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
             VectorBolax = 1
             VectorBolay = 0
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+(Paleta1.GetTamano()*2)/3:
             VectorBolax= 1
             VectorBolay= 1
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         #PALETA 2_____________________________________________________________
         if Posicion[1] == PosPa2[1]-1 and PosPa2[0]+Paleta2.GetTamano()/3 > Posicion[0] >= PosPa2[0]:
             VectorBolax = -1
             VectorBolay = -1
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa2[1]-1 and PosPa2[0]+(Paleta2.GetTamano()*2)/3 > Posicion[0] >= PosPa2[0]+Paleta2.GetTamano()/3:
             VectorBolax = -1
             VectorBolay = 0
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa2[1]-1 and PosPa2[0]+Paleta2.GetTamano() > Posicion[0] >= PosPa2[0]+(Paleta2.GetTamano()*2)/3:
             VectorBolax= -1
             VectorBolay= 1
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         #PALETA 3_____________________________________________________________________________________________
         if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+Paleta3.GetTamano()/3 > Posicion[0] >= PosPa3[0]:
             VectorBolax = 1
             VectorBolay = -1
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+(Paleta3.GetTamano()*2)/3 > Posicion[0] >= PosPa3[0]+Paleta3.GetTamano()/3:
             VectorBolax = 1
             VectorBolay = 0
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+Paleta3.GetTamano() > Posicion[0] >= PosPa3[0]+(Paleta3.GetTamano()*2)/3:
             VectorBolax= 1
             VectorBolay= 1
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         #PALETA 4_____________________________________________________________
         if Posicion[1] == PosPa4[1]-1 and PosPa4[0]+Paleta4.GetTamano()/3 > Posicion[0] >= PosPa4[0]:
             VectorBolax = -1
             VectorBolay = -1
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa4[1]-1 and PosPa4[0]+(Paleta4.GetTamano()*2)/3 > Posicion[0] >= PosPa4[0]+Paleta4.GetTamano()/3:
             VectorBolax = -1
             VectorBolay = 0
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa4[1]-1 and PosPa4[0]+Paleta4.GetTamano() > Posicion[0] >= PosPa4[0]+(Paleta4.GetTamano()*2)/3:
             VectorBolax= -1
             VectorBolay= 1
-            pygame.mixer.music.load("Golpe 4.mp3")
-            pygame.mixer.music.play(1)
 def Puntuacion():
     global VectorBolax
     global VectorBolay
@@ -464,12 +448,13 @@ def Puntuacion():
         Game.set_score1()
         VectorBolax *= -1
         VectorBolay *= -1
-    Mensajes(str(Game.get_score1()),7)
-    Mensajes(str(Game.get_score2()),9)
+    Puntuaciones(str(Game.get_score1()),7)
+    Puntuaciones(str(Game.get_score2()),9)
 def Win():
     global Nivel1
     global Nivel2
     global Nivel3
+    global Winner
     if Game.get_nivel()==2:
         Nivel1= False
         Nivel2= True
@@ -478,6 +463,12 @@ def Win():
         Nivel1= False
         Nivel2= False
         Nivel3= True
+    if Game.get_nivel()==4:
+        Nivel1= False
+        Nivel2= False
+        Nivel3= False
+        Winner= True
+        GameOver()
 def mainMenu():
     while Inicio:
         for event in pygame.event.get():
@@ -502,6 +493,26 @@ def Modo():
         Boton4 = Boton("1 Paleta", 355, 240, 100, 50, LightGrey, Grey, "1PA")
         pygame.display.update()
         fps.tick(60)
+def GameOver():
+    while Winner:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        root.blit(End, (0, 0))
+        Mensajes(Game.game_over())
+        #Boton(msg,x,y,w,h,ic,ac)
+        Boton1 = Boton("Restart", 100, 400, 100, 50, LightGrey, Grey, "Restart")
+        Boton2 = Boton("Quit", 600, 400, 100, 50, LightGrey, Grey, "Quit")
+        pygame.display.update()
+        fps.tick(60)
+def nivel(Nivel):
+    root.fill(Blue)
+    Mensajes("Nivel "+str(Nivel))
+    pygame.display.update()
+    fps.tick(60)
+    time.sleep(2)
+
 def mainloop():
     global Winner
     global Nivel1
@@ -518,6 +529,7 @@ def mainloop():
             Paleta3.SetPos([14, 0])
             Paleta4.SetPos([14, 39])
         Game.restart_Score()
+        nivel(1)
         while Nivel1:
             if Game.get_barras() == 1:
                 Puntuacion()
@@ -595,6 +607,7 @@ def mainloop():
             Paleta2.SetPos([3, 39])
             Paleta3.SetPos([14, 0])
             Paleta4.SetPos([14, 39])
+        nivel(2)
         while Nivel2:
             if Game.get_barras() == 1:
                 Puntuacion()
@@ -672,6 +685,7 @@ def mainloop():
             Paleta2.SetTamano(3)
             Paleta3.SetTamano(3)
             Paleta4.SetTamano(3)
+        nivel(3)
         while Nivel3:
             if Game.get_barras() == 1:
                 Puntuacion()
