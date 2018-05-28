@@ -383,6 +383,13 @@ def Colision(): #Define las coliciones con las distintas paredes
         pygame.mixer.music.load("golpe.mp3") #Sonido de golpe
         pygame.mixer.music.play(1)
 def ColPal():   #Define la colisión con las paletas
+    global VectorBolay
+    global VectorBolax
+    Posicion= Balon.GetPos()
+    PosPa1= Paleta1.GetPos()
+    PosPa2 = Paleta2.GetPos()
+    PosPa3 = Paleta3.GetPos()
+    PosPa4 = Paleta4.GetPos()
     if Game.get_barras() == 1:# Si la cantidad de paletas es 1
         #PALETA 1_____________________________________________________________
         #Define las coliciones con la paleta, ya sea que choque en la parte superior de la paleta, la del medio o la inferior
@@ -526,8 +533,9 @@ def mainMenu():
                 quit()
         root.blit(Menu, (0, 0))
         #Boton(msg,x,y,w,h,ic,ac)
-        Boton1 = Boton("2 Players", 355, 320, 100, 50, LightGrey, Grey, "PVP")
-        Boton2 = Boton("1 Player", 355, 240, 100, 50, LightGrey, Grey, "PVC")
+        Boton1 = Boton("2 Players", 355, 280, 100, 50, LightGrey, Grey, "PVP")
+        Boton2 = Boton("1 Player", 355, 210, 100, 50, LightGrey, Grey, "PVC")
+        Boton5 = Boton("Practice",355,350,100,50, LightGrey, Grey,"Pract")
         pygame.display.update()
         fps.tick(60)
 def Modo(): #Crea pantalla para escoger 1 jugador o dos jugadores
@@ -635,6 +643,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                                 Paleta2.moverBarra(1)
                 Game.winner() #Detecta los ganadores del nive1 1
                 Colision()
+                ColPal()
                 root.blit(Fondo, (0, 0)) #Coloca el fondo
                 VisualObjetos() #Muestra los objetos
                 Win()
@@ -671,6 +680,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                                 Paleta4.moverBarra(1)
                 Game.winner()
                 Colision()
+                ColPal()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
                 Win()
@@ -717,6 +727,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                                 Paleta2.moverBarra(1)
                 Game.winner()
                 Colision()
+                ColPal()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
                 Win()
@@ -753,6 +764,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                                 Paleta4.moverBarra(1)
                 Game.winner()
                 Colision()
+                ColPal()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
                 Win()
@@ -799,6 +811,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                                 Paleta2.moverBarra(1)
                 Game.winner()
                 Colision()
+                ColPal()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
                 Win()
@@ -835,6 +848,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                                 Paleta4.moverBarra(1)
                 Game.winner()
                 Colision()
+                ColPal()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
                 Win()
