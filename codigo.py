@@ -343,7 +343,30 @@ def Mensajes(texto): #Recibe un texto y lo convierte en un mensaje en pantalla
 def MoverBola(Velocidad):#Mueve la bola segun los vectores y recibe un argumento de velocidad que es la cantidad de tiempo que duerme
     Balon.Mover(VectorBolax, VectorBolay)#la funcion
     time.sleep(Velocidad)
-def Colision(): #Define las coliciones con las distintas paredes y con las paletas
+def ColPract():    #Colisión en paredes para el modo práctica
+    global VectorBolay
+    global VectorBolax
+    Posicion= Balon.GetPos()
+    PosPa1= Paleta1.GetPos()
+    PosPa3 = Paleta3.GetPos()
+    if Posicion[0] == 0: #Si toca en el techo invierte el desplazamiento
+        VectorBolay *= -1
+        pygame.mixer.music.load("golpe.mp3") #Sonido de golpe
+        pygame.mixer.music.play(1)
+    elif Posicion[0] == 24: #Si toca el suelo invierte el desplazamiento
+        VectorBolay *= -1
+        pygame.mixer.music.load("golpe.mp3") #Sonido de golpe
+        pygame.mixer.music.play(1)
+    elif Posicion[1] == 39:
+        VectorBolax *=-1
+        pygame.mixer.music.load("golpe.mp3") #Sonido de golpe
+        pygame.mixer.music.play(1)
+    Posicion = Balon.GetPos()
+    if Posicion[1]==0: #Si toco la pared derecha invierte el desplazamiento
+        Balon.posInicial()
+        VectorBolax *= -1
+        VectorBolay *= -1
+def Colision(): #Define las coliciones con las distintas paredes
     global VectorBolay
     global VectorBolax
     Posicion= Balon.GetPos()
@@ -359,6 +382,7 @@ def Colision(): #Define las coliciones con las distintas paredes y con las palet
         VectorBolay *= -1
         pygame.mixer.music.load("golpe.mp3") #Sonido de golpe
         pygame.mixer.music.play(1)
+def ColPal():   #Define la colisión con las paletas
     if Game.get_barras() == 1:# Si la cantidad de paletas es 1
         #PALETA 1_____________________________________________________________
         #Define las coliciones con la paleta, ya sea que choque en la parte superior de la paleta, la del medio o la inferior
