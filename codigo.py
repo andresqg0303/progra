@@ -4,6 +4,8 @@ ________________________________________________________________________________
 #Importes
 import pygame
 import time
+from tkinter import *
+
 #________________________________________________________________________________________________________________________________
 #_______________________________________________TABLERO__________________________________________________________________________
 
@@ -82,6 +84,18 @@ class Juego:
         self.score2 = score2
         self.win1 = 0
         self.win2 = 0
+    def show(self):
+        mostrar= ""
+        for i in range(self.tamanoMatriz[0]):
+            mostrar += "    "
+            for j in range(self.tamanoMatriz[1]):
+                Posi = self.matriz[i][j]
+                if type(Posi) != type(0):
+                    mostrar += str(Posi) + "    "
+                    continue
+                mostrar += str(Posi) + "    "
+            mostrar += "\n"
+        return mostrar
     def get_nivel(self): #Retorna el nivel en el que se está
         return self.nivel
     def set_score1(self): #Aumenta en 1 el score 1
@@ -120,10 +134,10 @@ class Juego:
                 temp+= [0]
             self.matriz+= [temp]
     def winner(self): #Aumenta el nivel y la cantidad de veces ganadas de nivel en nivel
-        if self.score1-2>=self.score2 and self.score1 >= 10:
+        if self.score1-1 >= self.score2 and self.score1 >= 7:
             self.win1 += 1
             self.nivel += 1
-        elif self.score2-2>=self.score1 and self.score2 >= 10:
+        elif self.score2-1 >= self.score1 and self.score2 >= 7:
             self.win2 += 1
             self.nivel += 1
     def game_over(self): #Retorna un string que dice quien ganó el juego
@@ -154,7 +168,7 @@ class Juego:
 # moverBarra()
 
 class Barra:
-    def __init__(self,tamano= 9,posicion= [8,0]):
+    def __init__(self,tamano= 9,posicion=[8,0]):
         self.tamano = tamano
         self.posicion = posicion
     def GetPos(self): #Retorna la posicion superior de la barra
@@ -270,6 +284,17 @@ Menu= pygame.image.load("Menu.jpg")
 End= pygame.image.load("GameOver.jpg")
 Fondo= pygame.image.load("Fondo.jpg")
 
+def muestreMatriz():
+    ventana= Tk()
+    ventana.title("Matriz")
+    ventana.minsize(734, 395)
+    ventana.maxsize(734, 395)
+    ventana.resizable(width= NO, height= NO)
+    Cv= Canvas(ventana, width= 800, height= 600, bg="#203864" )
+    Cv.place(x=-2,y=-1)
+    Matrix= Label(Cv, text= Game.show(), bg="#203864", fg= "white")
+    Matrix.place(x=0,y=2)
+    ventana.mainloop()
 def ObjetosTexto(text, font): #Renderiza los textos con el color y su fuente
     SuperficieTexto = font.render(text, True, White)
     return SuperficieTexto, SuperficieTexto.get_rect()
@@ -321,6 +346,8 @@ def Boton(msg,x,y,w,h,ic,ac,command= None): #Define Botones
             Game.restartGameAux()
             Inicio= True
             mainMenu()
+        elif click[0] == 1 and command == "Pause":
+            muestreMatriz()
         elif click[0] == 1 and command == "Quit":
             Winner = False
             pygame.quit()
@@ -610,7 +637,6 @@ def MovimientoCPU(Velocidad): #Define el movimiento de la computadora al jugar e
                     Paleta4.moverBarra(1)
                     time.sleep(Velocidad)
 
-
 def modop():#Modo Práctica
     global practica1
     pygame.mixer.music.stop() 
@@ -635,7 +661,8 @@ def modop():#Modo Práctica
                          Paleta1.moverBarra(1)
             root.blit(Fondo, (0, 0)) 
             VisualObjetos()
-            Boton1 = Boton("Volver", 680, 10, 100, 50, LightGrey, Grey, "Restart")
+            Boton1 = Boton("Volver", 680, 10, 90, 30, LightGrey, Grey, "Restart")
+            Pausa = Boton("Inspector", 680, 440, 100, 30, LightGrey, Grey, "Pause")
             pygame.display.update()
             fps.tick(60) 
             ColPract()
@@ -658,7 +685,8 @@ def modop():#Modo Práctica
                         Paleta3.moverBarra(1)
             root.blit(Fondo, (0, 0))
             VisualObjetos()
-            Boton1 = Boton("Volver", 680, 10, 100, 50, LightGrey, Grey, "Restart")
+            Boton1 = Boton("Volver", 680, 10, 90, 30, LightGrey, Grey, "Restart")
+            Pausa = Boton("Inspector", 680, 440, 100, 30, LightGrey, Grey, "Pause")
             pygame.display.update() 
             fps.tick(60) 
             ColPract()
@@ -719,6 +747,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                 root.blit(Fondo, (0, 0)) #Coloca el fondo
                 VisualObjetos() #Muestra los objetos
                 Win()
+                Pausa = Boton("Inspector", 600, 440, 95, 30, LightGrey, Grey, "Pause")
                 pygame.display.update() #Actualiza la página
                 fps.tick(60) #Define la velocidad del reloj interno del juego
             elif Game.get_barras() == 2: #Es lo mismo que la parte superior excepto porque es con dos barras
@@ -756,6 +785,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
                 Win()
+                Pausa = Boton("Inspector", 600, 440, 95, 30, LightGrey, Grey, "Pause")
                 pygame.display.update()
                 fps.tick(60)
         Game.restart_Score() #Reinicia puntuacion para el nivel 2
@@ -803,6 +833,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
                 Win()
+                Pausa = Boton("Inspector", 600, 440, 95, 30, LightGrey, Grey, "Pause")
                 pygame.display.update()
                 fps.tick(60)
             elif Game.get_barras() == 2:
@@ -840,6 +871,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
                 Win()
+                Pausa = Boton("Inspector", 600, 440, 95, 30, LightGrey, Grey, "Pause")
                 pygame.display.update()
                 fps.tick(60)
         Game.restart_Score()
@@ -887,6 +919,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
                 Win()
+                Pausa = Boton("Inspector", 600, 440, 95, 30, LightGrey, Grey, "Pause")
                 pygame.display.update()
                 fps.tick(60)
             elif Game.get_barras() == 2:
@@ -924,6 +957,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
                 Win()
+                Pausa = Boton("Inspector", 600, 440, 95, 30, LightGrey, Grey, "Pause")
                 pygame.display.update()
                 fps.tick(60)
 
