@@ -120,10 +120,10 @@ class Juego:
                 temp+= [0]
             self.matriz+= [temp]
     def winner(self): #Aumenta el nivel y la cantidad de veces ganadas de nivel en nivel
-        if self.score1-2>=self.score2 and self.score1 >= 10:
+        if self.score1-1>=self.score2 and self.score1 >= 7:
             self.win1 += 1
             self.nivel += 1
-        elif self.score2-2>=self.score1 and self.score2 >= 10:
+        elif self.score2-1>=self.score1 and self.score2 >= 7:
             self.win2 += 1
             self.nivel += 1
     def game_over(self): #Retorna un string que dice quien ganó el juego
