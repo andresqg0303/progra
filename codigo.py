@@ -114,6 +114,10 @@ class Juego:
         self.barras= Cantidad
     def get_barras(self): #Retorna la cantidad de barras en el juego
         return self.barras
+    def set_nivel(self,nivel):
+        self.nivel = nivel
+    def get_nivel(self):
+        return self.nivel
     def set_player(self,modo): #Define si se juega contra otro jugador o contra la maquina
         self.PVC = modo
     def get_player(self): # Retorna si es Player vs Player o Player vs CPU
@@ -268,8 +272,10 @@ Inicio2= False
 Mode= False
 Mode2= False
 Mode3= False
+Mode4= False
 Winner= False
 practica1 = True
+bola1 = False
 #Instancias de las paletas
 Paleta1= Barra()
 Paleta2= Barra(posicion= [8,39])
@@ -367,6 +373,8 @@ def Boton(msg,x,y,w,h,ic,ac,command= None): #Define Botones
     global Winner
     global Mode2
     global Mode3
+    global Mode4
+    global bola1
     mouse = pygame.mouse.get_pos() #Me informa la posicion del mouse
     click= pygame.mouse.get_pressed() #Dice si algo se clicó
     if x+w > mouse[0] > x and y+h > mouse[1] > y: #Comprueba que la posicion del mouse este dentro del boton
@@ -410,10 +418,27 @@ def Boton(msg,x,y,w,h,ic,ac,command= None): #Define Botones
         elif click[0] == 1 and command == "1PA1":
             Game.set_barras(1)
             Mode2 = False
-            modop()
+            Mode4 = True
+            time.sleep(0.2)
+            selectNivel()
         elif click[0] == 1 and command == "2PA1":
             Game.set_barras(2)
             Mode2 = False
+            Mode4 = True
+            time.sleep(0.2)
+            selectNivel()
+            
+        elif click[0] == 1 and command == "N1":
+            Game.set_nivel(1)
+            Mode4 = False
+            modop()
+        elif click[0] == 1 and command == "N2":
+            Game.set_nivel(2)
+            Mode4 = False
+            modop()
+        elif click[0] == 1 and command == "N3":
+            Game.set_nivel(3)
+            Mode4 = False
             modop()
         elif click[0] == 1 and command == "Restart":
             Winner = False
@@ -733,6 +758,19 @@ def selectTrampolin():
         Boton9 = Boton("Trampolines", 345, 310, 120, 50, LightGrey, Grey, "Trampolin")
         pygame.display.update()
         fps.tick(60)
+def selectNivel():
+    while Mode4:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        root.blit(Menu, (0, 0))
+        #Boton(msg,x,y,w,h,ic,ac)
+        Boton10 = Boton("Nivel 1", 355, 210, 100, 50, LightGrey, Grey, "N1")
+        Boton11= Boton("Nivel2", 355, 280, 100, 50, LightGrey, Grey, "N2")
+        Boton12= Boton("Nivel3",355,350,100,50, LightGrey, Grey,"N3")
+        pygame.display.update()
+        fps.tick(60)
 def GameOver(): #Crea una pantalla que indica el final del juego y tiene un boton de reiniciar y uno de cerrar el juego
     while Winner:
         for event in pygame.event.get():
@@ -786,9 +824,16 @@ def modop():#Modo Práctica
         Paleta1.SetPos([2, 0])
         Paleta3.SetPos([14, 0])
     while practica1:
+        if Game.get_nivel()==1:
+            MoverBola(0.04)
+        if Game.get_nivel()==2:
+            MoverBola(0.03)
+        if Game.get_nivel()==3:
+            MoverBola(0.02
+                      )
         if Game.get_barras() == 1:
             Paleta1.colocarBarra()
-            MoverBola(0.04)
+    
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: 
                     Paleta1.SetPos([8,0])
@@ -807,8 +852,7 @@ def modop():#Modo Práctica
             fps.tick(60) 
             ColPract()
             ColPal2()
-        elif Game.get_barras() == 2: 
-            MoverBola(0.04)
+        elif Game.get_barras() == 2:
             Paleta1.colocarBarra()
             Paleta3.colocarBarra()
             for event in pygame.event.get():
