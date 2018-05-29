@@ -825,15 +825,19 @@ def modop():#Modo Práctica
         Paleta3.SetPos([14, 0])
     while practica1:
         if Game.get_nivel()==1:
+            Paleta1.SetTamano(9)
+            Paleta3.SetTamano(9)
             MoverBola(0.04)
         if Game.get_nivel()==2:
+            Paleta1.SetTamano(6)
+            Paleta3.SetTamano(6)
             MoverBola(0.03)
         if Game.get_nivel()==3:
-            MoverBola(0.02
-                      )
+            Paleta1.SetTamano(3)
+            Paleta3.SetTamano(3)
+            MoverBola(0.02)
         if Game.get_barras() == 1:
             Paleta1.colocarBarra()
-    
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: 
                     Paleta1.SetPos([8,0])
