@@ -5,7 +5,8 @@ ________________________________________________________________________________
 import pygame
 import time
 from tkinter import *
-
+from tkinter import messagebox
+import pandas as pd
 #________________________________________________________________________________________________________________________________
 #_______________________________________________TABLERO__________________________________________________________________________
 
@@ -44,6 +45,25 @@ uno se vulve una bola"""
 _________________________________________________________CLASES___________________________________________________________________
 __________________________________________________________________________________________________________________________________"""
 
+def username(): #Ventana de registro de usuario
+    menu = Tk() 
+    menu.title("Usuario")
+    label1 = Label(menu,text="Iniciales:")
+    label1.grid(row=0,column=0)
+    entry1=Entry(menu) 
+    entry1.grid(row=0,column=1)
+    def register():
+        f = open ("1.txt",'a') #Abre el archivo para escribir en él
+        f.write(entry1.get()) #Escribe el usuario en el archivo
+        f.write(" ") #Deja un espacio
+        f.write("\n") #Pasa a la siguiente línea
+        f.close() #Cierra el archivo
+        messagebox.showinfo("","Registrado correctamente")
+        menu.destroy() #Cierra la ventana de registro
+    entry1.grid(row=0,column=1)
+    boton1= Button(menu,text="Ingresar",command=register)
+    boton1.grid(row=0,column=2)
+    menu.mainloop()
 """Juego"""
 # Atributos:
 # nivel: int
@@ -264,24 +284,12 @@ _______________________________________________Código de Juego_________________
 ________________________________________________________________________________________________________________________"""
 
 
-def username(): #Ventana de registro de usuario
-    menu = Tk() 
-    menu.title("Usuario")
-    label1 = Label(menu,text="Iniciales:")
-    label1.grid(row=0,column=0)
-    entry1=Entry(menu) 
-    entry1.grid(row=0,column=1)
-    boton1= Button(menu,text="Ingresar")
-    boton1.grid(row=0,column=2)
-    menu.mainloop()
 
 
 pygame.init() #Inicia pygame
 #Variables______________________________________________________________________________________________________________
 fps= pygame.time.Clock() #Reloj interno del juego
 Game = Juego() #Define la instancia del juego
-
-username()
 #Variables que activan pantallas
 Inicio= True
 Inicio2= False
@@ -369,6 +377,20 @@ Menu= pygame.image.load("Menu.jpg")
 End= pygame.image.load("GameOver.jpg")
 Fondo= pygame.image.load("Fondo.jpg")
 
+def tabla():
+    app4=Tk()
+    app4.title("Tabla de puntuaciones")
+    def ff():
+        df = pd.read_csv("1.txt", sep=" ", header=None, names=["Usuario", "Puntos"])
+        return df
+
+    df = StringVar()
+
+    label1=Label(app4,textvariable=df,height=15,width=80,justify=LEFT,font=("Times New Roman","10"))
+    df.set(ff())
+    label1.pack()
+    app4.mainloop()
+
 def muestreMatriz():
     ventana= Tk()
     ventana.title("Matriz")
@@ -413,6 +435,9 @@ def Boton(msg,x,y,w,h,ic,ac,command= None): #Define Botones
             time.sleep(0.2)
             Mode2 = True
             Modo2()
+        elif click[0] == 1 and command == "Punt":
+            print ("fuck")
+            tabla()
         elif click[0] == 1 and command == "1PA":
             Game.set_barras(1)
             Mode = False
@@ -725,6 +750,7 @@ def Win(): #Aumenta cada nivel y al final dice quien ganó la partida
         Nivel3= False
         Winner= True
         GameOver()
+        username()
 
 def mainMenu():
     while Inicio:
@@ -737,6 +763,7 @@ def mainMenu():
         Boton1 = Boton("2 Players", 355, 280, 100, 50, LightGrey, Grey, "PVP")
         Boton2 = Boton("1 Player", 355, 210, 100, 50, LightGrey, Grey, "PVC")
         Boton5 = Boton("Training",355,350,100,50, LightGrey, Grey,"Pract")
+        boton20= Boton("Puntuaciones",15,450,150,35,LightGrey,Grey,"Punt")
         pygame.display.update()
         fps.tick(60)
 
@@ -797,6 +824,7 @@ def GameOver(): #Crea una pantalla que indica el final del juego y tiene un boto
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+        username()
         root.blit(End, (0, 0))
         Mensajes(Game.game_over())
         #Boton(msg,x,y,w,h,ic,ac)
