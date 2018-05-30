@@ -262,10 +262,26 @@ class Trampolin:
 """_____________________________________________________________________________________________________________________
 _______________________________________________Código de Juego__________________________________________________________
 ________________________________________________________________________________________________________________________"""
+
+
+def username(): #Ventana de registro de usuario
+    menu = Tk() 
+    menu.title("Usuario")
+    label1 = Label(menu,text="Iniciales:")
+    label1.grid(row=0,column=0)
+    entry1=Entry(menu) 
+    entry1.grid(row=0,column=1)
+    boton1= Button(menu,text="Ingresar")
+    boton1.grid(row=0,column=2)
+    menu.mainloop()
+
+
 pygame.init() #Inicia pygame
 #Variables______________________________________________________________________________________________________________
 fps= pygame.time.Clock() #Reloj interno del juego
 Game = Juego() #Define la instancia del juego
+
+username()
 #Variables que activan pantallas
 Inicio= True
 Inicio2= False
@@ -709,6 +725,7 @@ def Win(): #Aumenta cada nivel y al final dice quien ganó la partida
         Nivel3= False
         Winner= True
         GameOver()
+
 def mainMenu():
     while Inicio:
         for event in pygame.event.get():
@@ -722,6 +739,9 @@ def mainMenu():
         Boton5 = Boton("Training",355,350,100,50, LightGrey, Grey,"Pract")
         pygame.display.update()
         fps.tick(60)
+
+
+    
 def Modo(): #Crea pantalla para escoger 1 jugador o dos jugadores
     while Mode:
         for event in pygame.event.get():
@@ -829,6 +849,7 @@ def modop():#Modo Práctica
             Paleta3.SetTamano(9)
             MoverBola(0.04)
         if Game.get_nivel()==2:
+
             Paleta1.SetTamano(6)
             Paleta3.SetTamano(6)
             MoverBola(0.03)
