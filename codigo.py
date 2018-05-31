@@ -45,25 +45,7 @@ uno se vulve una bola"""
 _________________________________________________________CLASES___________________________________________________________________
 __________________________________________________________________________________________________________________________________"""
 
-def username(): #Ventana de registro de usuario
-    menu = Tk() 
-    menu.title("Usuario")
-    label1 = Label(menu,text="Iniciales:")
-    label1.grid(row=0,column=0)
-    entry1=Entry(menu) 
-    entry1.grid(row=0,column=1)
-    def register():
-        f = open ("1.txt",'a') #Abre el archivo para escribir en él
-        f.write(entry1.get()) #Escribe el usuario en el archivo
-        f.write(" ") #Deja un espacio
-        f.write("\n") #Pasa a la siguiente línea
-        f.close() #Cierra el archivo
-        messagebox.showinfo("","Registrado correctamente")
-        menu.destroy() #Cierra la ventana de registro
-    entry1.grid(row=0,column=1)
-    boton1= Button(menu,text="Ingresar",command=register)
-    boton1.grid(row=0,column=2)
-    menu.mainloop()
+
 """Juego"""
 # Atributos:
 # nivel: int
@@ -377,20 +359,43 @@ Menu= pygame.image.load("Menu.jpg")
 End= pygame.image.load("GameOver.jpg")
 Fondo= pygame.image.load("Fondo.jpg")
 
+def username(): #Ventana de registro de usuario
+    menu = Tk() 
+    menu.title("Usuario")
+    label1 = Label(menu,text="Iniciales:")
+    label1.grid(row=0,column=0)
+    entry1=Entry(menu) 
+    entry1.grid(row=0,column=1)
+    def register():
+        f = open ("1.txt",'a') #Abre el archivo para escribir en él
+        f.write(entry1.get()) #Escribe el usuario en el archivo
+        f.write(" ") #Deja un espacio
+        f.write("\n") #Pasa a la siguiente línea
+        f.close() #Cierra el archivo
+        messagebox.showinfo("","Registrado correctamente")
+        menu.destroy() #Cierra la ventana de registro
+    entry1.grid(row=0,column=1)
+    boton1= Button(menu,text="Ingresar",command=register)
+    boton1.grid(row=0,column=2)
+    menu.mainloop()
+
 def tabla():
-    app4=Tk()
-    app4.title("Tabla de puntuaciones")
+    tabla1=Tk()
+    tabla1.title("Tabla de puntuaciones")
+    tabla1.maxsize(200,200)
+    Cv2= Canvas(tabla1, width= 800, height= 600, bg="#203864" )
+    Cv2.place(x=-2,y=-1)
     def ff():
         df = pd.read_csv("1.txt", sep=" ", header=None, names=["Usuario", "Puntos"])
         return df
 
     df = StringVar()
 
-    label1=Label(app4,textvariable=df,height=15,width=80,justify=LEFT,font=("Times New Roman","10"))
+    label1=Label(tabla1,textvariable=df,height=15,width=80,justify=LEFT,font=("Times New Roman","10"),bg="#203864", fg= "white")
     df.set(ff())
     label1.pack()
-    app4.mainloop()
-
+    tabla1.mainloop()
+#
 def muestreMatriz():
     ventana= Tk()
     ventana.title("Matriz")
