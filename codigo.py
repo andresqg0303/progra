@@ -7,6 +7,7 @@ import time
 from tkinter import *
 from tkinter import messagebox
 import pandas as pd
+from threading import *
 #________________________________________________________________________________________________________________________________
 #_______________________________________________TABLERO__________________________________________________________________________
 
@@ -112,6 +113,7 @@ class Juego:
         self.score2 = 0
         self.win1 = 0
         self.win2 = 0
+        self.nivel = 1
     def set_barras(self,Cantidad): #Define la cantidad de barras, ya sea 1 o 2
         self.barras= Cantidad
     def get_barras(self): #Retorna la cantidad de barras en el juego
@@ -282,27 +284,19 @@ Mode4= False
 Winner= False
 practica1 = True
 bola1 = False
+Time= 0
+thread= True
+
 #Instancias de las paletas
 Paleta1= Barra()
 Paleta2= Barra(posicion= [8,39])
 Paleta3= Barra(posicion= [])
 Paleta4= Barra(posicion= [])
+
 #Instancia de la bola
 Balon= Bola()
-#Instancias de los Trampolines
-"""#Nivel 1
-Tramp1= Trampolin(posicion=[6,19])
-Tramp2= Trampolin(posicion=[16,19])
-#Nivel 2
-Tramp3= Trampolin(posicion=[4,22])
-Tramp4= Trampolin(posicion=[11,18])
-Tramp5= Trampolin(posicion=[19, 22])
-#Nivel 3
-Tramp6= Trampolin(posicion=[3,18])
-Tramp7= Trampolin(posicion=[8,22])
-Tramp8= Trampolin(posicion=[14,18])
-Tramp9= Trampolin(posicion=[20,22])"""
 
+#Instancias de los Trampolines
 #Nivel 1
 Tramp1= Trampolin(posicion=[5,19],tamano=4)
 Tramp2= Trampolin(posicion=[16,19],tamano=4)
@@ -315,7 +309,7 @@ Tramp6= Trampolin(posicion=[3,19])
 Tramp7= Trampolin(posicion=[8,19])
 Tramp8= Trampolin(posicion=[14,19])
 Tramp9= Trampolin(posicion=[20,19])
-
+#Lista de los trampolines
 Trampolines= [[Tramp1,Tramp2],[Tramp3,Tramp4,Tramp5],[Tramp6,Tramp7,Tramp8,Tramp9]]
 
 #Vectores de movimiento de la bola
@@ -378,7 +372,6 @@ def username(): #Ventana de registro de usuario
     boton1= Button(menu,text="Ingresar",command=register)
     boton1.grid(row=0,column=2)
     menu.mainloop()
-
 def tabla():
     tabla1=Tk()
     tabla1.title("Tabla de puntuaciones")
@@ -395,17 +388,24 @@ def tabla():
     df.set(ff())
     label1.pack()
     tabla1.mainloop()
-#
 def muestreMatriz():
     ventana= Tk()
-    ventana.title("Matriz")
-    ventana.minsize(734, 395)
-    ventana.maxsize(734, 395)
+    ventana.title("Pausa")
+    ventana.minsize(980, 550)
+    ventana.maxsize(980, 550)
     ventana.resizable(width= NO, height= NO)
-    Cv= Canvas(ventana, width= 800, height= 600, bg="#203864" )
-    Cv.place(x=-2,y=-1)
-    Matrix= Label(Cv, text= Game.show(), bg="#203864", fg= "white")
+    Cv= Canvas(ventana, width= 980, height= 550, bg="#203864" )
+    Cv.place(x=-1,y=-1)
+    Matrix= Label(Cv, text = Game.show(), bg="#203864", fg= "white")
     Matrix.place(x=0,y=2)
+    def quitarPausa():
+        global thread
+        thread = True
+        Cronometro = Thread(target=Timer)
+        Cronometro.start()
+        ventana.destroy()
+    Volver= Button(Cv, text= "Volver", command= quitarPausa)
+    Volver.place(x=10,y=460)
     ventana.mainloop()
 def ObjetosTexto(text, font): #Renderiza los textos con el color y su fuente
     SuperficieTexto = font.render(text, True, White)
@@ -414,10 +414,13 @@ def Boton(msg,x,y,w,h,ic,ac,command= None): #Define Botones
     global Inicio
     global Mode
     global Winner
+    global Nivel1
     global Mode2
     global Mode3
     global Mode4
     global bola1
+    global thread
+    Cronometro = Thread(target=Timer)
     mouse = pygame.mouse.get_pos() #Me informa la posicion del mouse
     click= pygame.mouse.get_pressed() #Dice si algo se clicó
     if x+w > mouse[0] > x and y+h > mouse[1] > y: #Comprueba que la posicion del mouse este dentro del boton
@@ -457,9 +460,11 @@ def Boton(msg,x,y,w,h,ic,ac,command= None): #Define Botones
             selectTrampolin()
         elif click[0] == 1 and command == "Trampolin":
             Mode3 = False
+            Cronometro.start()
             LoopObstaculos()
         elif click[0] == 1 and command == "Normal":
             Mode3 = False
+            Cronometro.start()
             mainloop()
         elif click[0] == 1 and command == "1PA1":
             Game.set_barras(1)
@@ -488,10 +493,12 @@ def Boton(msg,x,y,w,h,ic,ac,command= None): #Define Botones
             modop()
         elif click[0] == 1 and command == "Restart":
             Winner = False
-            Game.restartGameAux()
             Inicio= True
+            Nivel1= True
+            Game.restartGameAux()
             mainMenu()
         elif click[0] == 1 and command == "Pause":
+            thread= False
             muestreMatriz()
         elif click[0] == 1 and command == "Quit":
             Winner = False
@@ -756,7 +763,6 @@ def Win(): #Aumenta cada nivel y al final dice quien ganó la partida
         Winner= True
         GameOver()
         username()
-
 def mainMenu():
     while Inicio:
         for event in pygame.event.get():
@@ -771,9 +777,6 @@ def mainMenu():
         boton20= Boton("Puntuaciones",15,450,150,35,LightGrey,Grey,"Punt")
         pygame.display.update()
         fps.tick(60)
-
-
-    
 def Modo(): #Crea pantalla para escoger 1 jugador o dos jugadores
     while Mode:
         for event in pygame.event.get():
@@ -824,12 +827,13 @@ def selectNivel():
         pygame.display.update()
         fps.tick(60)
 def GameOver(): #Crea una pantalla que indica el final del juego y tiene un boton de reiniciar y uno de cerrar el juego
+    if Game.game_over() != "CPU won":
+        username()
     while Winner:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-        username()
         root.blit(End, (0, 0))
         Mensajes(Game.game_over())
         #Boton(msg,x,y,w,h,ic,ac)
@@ -867,6 +871,20 @@ def MovimientoCPU(Velocidad): #Define el movimiento de la computadora al jugar e
                     Paleta2.moverBarra(1)
                     Paleta4.moverBarra(1)
                     time.sleep(Velocidad)
+def Timer():
+    global thread
+    global Time
+    while thread:
+        Time += 1
+        time.sleep(1)
+        print(Time)
+
+
+
+
+"""_____________________________________________________________________________________________________________________
+______________________________________Loops de los modos de juego_______________________________________________________
+_____________________________________________________________________________________________________________________"""
 
 def modop():#Modo Práctica
     global practica1
@@ -940,9 +958,15 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
     global Nivel2
     global Nivel3
     global CPU
+    global thread
     while not Winner:
         #Para la música al salirse del menú
         #Estos dos if definen las posiciones de las paletas
+        if Game.get_nivel()==1: #Define el tamaño de las paletas en el nivel 2
+            Paleta1.SetTamano(9)
+            Paleta2.SetTamano(9)
+            Paleta3.SetTamano(9)
+            Paleta4.SetTamano(9)
         if Game.get_barras() == 1 and Game.get_nivel() == 1:
             Paleta1.SetPos([8, 0])
             Paleta2.SetPos([8, 39])
@@ -964,8 +988,10 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                     MovimientoCPU(0.055)
                 for event in pygame.event.get():#Toma los eventos de teclas y mouse ademas de posicion de este
                     if event.type == pygame.QUIT: #Define la utilidad de la x en el juego
+                        thread= False
                         Paleta1.SetPos([8,0])
                         Paleta2.SetPos([8,39])
+                        Winner= False
                         pygame.quit()
                         quit()
                     elif event.type == pygame.KEYDOWN: #Detecta cuando se presiona una tecla
@@ -1001,6 +1027,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                     MovimientoCPU(0.06)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        thread = False
                         Paleta1.SetPos([8, 0])
                         Paleta2.SetPos([8, 39])
                         pygame.quit()
@@ -1053,6 +1080,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                     MovimientoCPU(0.045)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        thread = False
                         Paleta1.SetPos([8,0])
                         Paleta2.SetPos([8,39])
                         pygame.quit()
@@ -1087,6 +1115,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                     MovimientoCPU(0.05)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        thread = False
                         Paleta1.SetPos([8, 0])
                         Paleta2.SetPos([8, 39])
                         pygame.quit()
@@ -1139,6 +1168,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                     MovimientoCPU(0.035)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        thread = False
                         Paleta1.SetPos([8,0])
                         Paleta2.SetPos([8,39])
                         pygame.quit()
@@ -1173,6 +1203,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                     MovimientoCPU(0.04)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        thread = False
                         Paleta1.SetPos([8, 0])
                         Paleta2.SetPos([8, 39])
                         pygame.quit()
@@ -1200,12 +1231,14 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                 Pausa = Boton("Inspector", 600, 440, 95, 30, LightGrey, Grey, "Pause")
                 pygame.display.update()
                 fps.tick(60)
+
 def LoopObstaculos():
     global Winner
     global Nivel1
     global Nivel2
     global Nivel3
     global CPU
+    global thread
     while not Winner:
         # Para la música al salirse del menú
         # Estos dos if definen las posiciones de las paletas
@@ -1236,6 +1269,7 @@ def LoopObstaculos():
                     MovimientoCPU(0.055)
                 for event in pygame.event.get():  # Toma los eventos de teclas y mouse ademas de posicion de este
                     if event.type == pygame.QUIT:  # Define la utilidad de la x en el juego
+                        thread = False
                         Paleta1.SetPos([8, 0])
                         Paleta2.SetPos([8, 39])
                         pygame.quit()
@@ -1276,6 +1310,7 @@ def LoopObstaculos():
                     MovimientoCPU(0.06)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        thread = False
                         Paleta1.SetPos([8, 0])
                         Paleta2.SetPos([8, 39])
                         pygame.quit()
@@ -1335,6 +1370,7 @@ def LoopObstaculos():
                     MovimientoCPU(0.045)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        thread = False
                         Paleta1.SetPos([8, 0])
                         Paleta2.SetPos([8, 39])
                         pygame.quit()
@@ -1371,6 +1407,7 @@ def LoopObstaculos():
                     MovimientoCPU(0.05)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        thread = False
                         Paleta1.SetPos([8, 0])
                         Paleta2.SetPos([8, 39])
                         pygame.quit()
@@ -1432,6 +1469,7 @@ def LoopObstaculos():
                     MovimientoCPU(0.035)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        thread = False
                         Paleta1.SetPos([8, 0])
                         Paleta2.SetPos([8, 39])
                         pygame.quit()
@@ -1468,6 +1506,7 @@ def LoopObstaculos():
                     MovimientoCPU(0.04)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
+                        thread = False
                         Paleta1.SetPos([8, 0])
                         Paleta2.SetPos([8, 39])
                         pygame.quit()
