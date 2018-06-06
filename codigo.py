@@ -142,10 +142,10 @@ class Juego:
                 temp+= [0]
             self.matriz+= [temp]
     def winner(self): #Aumenta el nivel y la cantidad de veces ganadas de nivel en nivel
-        if self.score1-1 >= self.score2 and self.score1 >= 7:
+        if self.score1-1 >= self.score2 and self.score1 >= 2:
             self.win1 += 1
             self.nivel += 1
-        elif self.score2-1 >= self.score1 and self.score2 >= 7:
+        elif self.score2-1 >= self.score1 and self.score2 >= 2:
             self.win2 += 1
             self.nivel += 1
     def game_over(self): #Retorna un string que dice quien ganó el juego
@@ -292,7 +292,8 @@ Paleta1= Barra()
 Paleta2= Barra(posicion= [8,39])
 Paleta3= Barra(posicion= [])
 Paleta4= Barra(posicion= [])
-
+Paleta5= Barra(posicion= [8,39])
+Paleta6= Barra(posicion= [])
 #Instancia de la bola
 Balon= Bola()
 
@@ -352,6 +353,12 @@ pygame.key.set_repeat(1,30)
 Menu= pygame.image.load("Menu.jpg")
 End= pygame.image.load("GameOver.jpg")
 Fondo= pygame.image.load("Fondo.jpg")
+'''def ventana1():
+    root = Tk()
+    Time=StringVar()
+    label1 = Label(root, textvariable=Time)
+    label1.pack()
+    root.mainloop()'''
 
 def username(): #Ventana de registro de usuario
     menu = Tk() 
@@ -444,7 +451,6 @@ def Boton(msg,x,y,w,h,ic,ac,command= None): #Define Botones
             Mode2 = True
             Modo2()
         elif click[0] == 1 and command == "Punt":
-            print ("fuck")
             tabla()
         elif click[0] == 1 and command == "1PA":
             Game.set_barras(1)
@@ -526,6 +532,12 @@ def Puntuaciones(texto,lado): #Muestra las puntuaciones en la pantalla y recibe 
     TextRect.center = ((Height/10)*lado,(Width/20))
     root.blit(TextSurf, TextRect)
     pygame.display.update()
+def TimerVis(texto,lado):
+    smallText = pygame.font.Font('freesansbold.ttf',40)
+    TextSurf, TextRect = ObjetosTexto(texto, smallText)
+    TextRect.center = ((Height/15)*lado,(Width/0))
+    root.blit(TextSurf, TextRect)
+    pygame.display.update()
 def Mensajes(texto): #Recibe un texto y lo convierte en un mensaje en pantalla
     smallText = pygame.font.Font('freesansbold.ttf',40)
     TextSurf, TextRect = ObjetosTexto(texto, smallText)
@@ -572,13 +584,13 @@ def ColPal2():  #Colisión paletas para modo práctica
     if Game.get_barras() == 1:# Si la cantidad de paletas es 1
         #PALETA 1_____________________________________________________________
         #Define las coliciones con la paleta, ya sea que choque en la parte superior de la paleta, la del medio o la inferior
-        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/3 > Posicion[0] >= PosPa1[0]:
+        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/2 > Posicion[0] >= PosPa1[0]:
             VectorBolax = 1
             VectorBolay = -1
-        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
-            VectorBolax = 1
-            VectorBolay = 0
-        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+(Paleta1.GetTamano()*2)/3:
+        #if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
+            #VectorBolax = 1
+            #VectorBolay = 0
+        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/2:
             VectorBolax= 1
             VectorBolay= 1
     if Game.get_barras() == 2: #Si hay 2 paletas por lado
@@ -611,6 +623,8 @@ def ColPal():   #Define la colisión con las paletas
     PosPa2 = Paleta2.GetPos()
     PosPa3 = Paleta3.GetPos()
     PosPa4 = Paleta4.GetPos()
+    PosPa5 = Paleta5.GetPos()
+    PosPa6 = Paleta6.GetPos()
     if Game.get_barras() == 1:# Si la cantidad de paletas es 1
         #PALETA 1_____________________________________________________________
         #Define las coliciones con la paleta, ya sea que choque en la parte superior de la paleta, la del medio o la inferior
@@ -670,9 +684,73 @@ def ColPal():   #Define la colisión con las paletas
             VectorBolax = -1
             VectorBolay = -1
         if Posicion[1] == PosPa4[1]-1 and PosPa4[0]+(Paleta4.GetTamano()*2)/3 > Posicion[0] >= PosPa4[0]+Paleta4.GetTamano()/3:
-            VectorBolax = -1
+            VectorBolax = -1                            
             VectorBolay = 0
         if Posicion[1] == PosPa4[1]-1 and PosPa4[0]+Paleta4.GetTamano() > Posicion[0] >= PosPa4[0]+(Paleta4.GetTamano()*2)/3:
+            VectorBolax= -1
+            VectorBolay= 1
+
+def ColPal2():   #Define la colisión con las paletas
+    global VectorBolay
+    global VectorBolax
+    Posicion= Balon.GetPos()
+    PosPa1= Paleta1.GetPos()
+    PosPa3 = Paleta3.GetPos()
+    PosPa5 = Paleta5.GetPos()
+    PosPa6 = Paleta6.GetPos()
+    if Game.get_barras() == 1:# Si la cantidad de paletas es 1
+        #PALETA 1_____________________________________________________________
+        #Define las coliciones con la paleta, ya sea que choque en la parte superior de la paleta, la del medio o la inferior
+        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/3 > Posicion[0] >= PosPa1[0]:
+            VectorBolax = 1
+            VectorBolay = -1
+        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
+            VectorBolax = 1
+            VectorBolay = 0
+        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+(Paleta1.GetTamano()*2)/3:
+            VectorBolax= 1
+            VectorBolay= 1
+        #PALETA5
+        if Posicion[1] == PosPa5[1]-1 and PosPa5[0]+Paleta5.GetTamano()/2 > Posicion[0] >= PosPa5[0]:
+            VectorBolax = -1
+            VectorBolay = -1
+        if Posicion[1] == PosPa5[1]-1 and PosPa5[0]+Paleta5.GetTamano() > Posicion[0] >= PosPa5[0]+Paleta5.GetTamano()/2:
+            VectorBolax= -1
+            VectorBolay= 1
+    if Game.get_barras() == 2: #Si hay 2 paletas por lado
+        #PALETA 1______________________________________________________________
+        # Define las coliciones con la paleta, ya sea que choque en la parte superior de la paleta, la del medio o la inferior
+        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/3 > Posicion[0] >= PosPa1[0]:
+            VectorBolax = 1
+            VectorBolay = -1
+        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
+            VectorBolax = 1
+            VectorBolay = 0
+        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+(Paleta1.GetTamano()*2)/3:
+            VectorBolax= 1
+            VectorBolay= 1
+        #PALETA 3_____________________________________________________________________________________________
+        if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+Paleta3.GetTamano()/3 > Posicion[0] >= PosPa3[0]:
+            VectorBolax = 1
+            VectorBolay = -1
+        if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+(Paleta3.GetTamano()*2)/3 > Posicion[0] >= PosPa3[0]+Paleta3.GetTamano()/3:
+            VectorBolax = 1
+            VectorBolay = 0
+        if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+Paleta3.GetTamano() > Posicion[0] >= PosPa3[0]+(Paleta3.GetTamano()*2)/3:
+            VectorBolax= 1
+            VectorBolay= 1
+        #PALETA5
+        if Posicion[1] == PosPa5[1]-1 and PosPa5[0]+Paleta5.GetTamano()/2 > Posicion[0] >= PosPa1[0]:
+            VectorBolax = -1
+            VectorBolay = -1
+        if Posicion[1] == PosPa5[1]-1 and PosPa5[0]+Paleta5.GetTamano() > Posicion[0] >= PosPa5[0]+Paleta5.GetTamano()/2:
+            VectorBolax= -1
+            VectorBolay= 1
+        #PALETA6
+        if Posicion[1] == PosPa6[1]-1 and PosPa6[0]+Paleta6.GetTamano()/2 > Posicion[0] >= PosPa6[0]:
+            VectorBolax = -1
+            VectorBolay = -1
+        if Posicion[1] == PosPa6[1]-1 and PosPa6[0]+Paleta6.GetTamano() > Posicion[0] >= PosPa6[0]+Paleta6.GetTamano()/2:
             VectorBolax= -1
             VectorBolay= 1
 def ColTramp():
@@ -684,7 +762,7 @@ def ColTramp():
         if Pos[1]== Tramp1.GetPos()[1] - 1 and Tramp1.GetPos()[0]-1<Pos[0]< Tramp1.GetPos()[0]+Tramp1.GetTamano()+1:
             VectorBolax = -1
         if Pos[1]== Tramp1.GetPos()[1] + 1 and Tramp1.GetPos()[0]-1<Pos[0]< Tramp1.GetPos()[0]+Tramp1.GetTamano()+1:
-            VectorBolax = 1
+            VectorBolax = 1            
         #Tramp2__________________________________________________________________________________________________
         if Pos[1]== Tramp2.GetPos()[1] - 1 and Tramp2.GetPos()[0]-1<Pos[0]< Tramp2.GetPos()[0]+Tramp2.GetTamano()+1:
             VectorBolax = -1
@@ -763,6 +841,7 @@ def Win(): #Aumenta cada nivel y al final dice quien ganó la partida
         Winner= True
         GameOver()
         username()
+        Cronometro.stop()
 def mainMenu():
     while Inicio:
         for event in pygame.event.get():
@@ -871,13 +950,36 @@ def MovimientoCPU(Velocidad): #Define el movimiento de la computadora al jugar e
                     Paleta2.moverBarra(1)
                     Paleta4.moverBarra(1)
                     time.sleep(Velocidad)
+def MoviCPUPal(Velocidad):
+    if Game.get_barras()== 1:
+        if Balon.GetPos()[1] >= 30:
+            if Balon.GetPos()[0] < Paleta5.GetPos()[0]:
+                if Paleta5.GetPos()[0] > 0:
+                    Paleta5.moverBarra(-1)
+                    time.sleep(Velocidad)
+            elif Balon.GetPos()[0] > Paleta5.GetPos()[0] + Paleta5.GetTamano()-1:
+                if Paleta5.GetPos()[0] + Paleta5.GetTamano() < 24:
+                    Paleta5.moverBarra(1)
+                    time.sleep(Velocidad)
+    elif Game.get_barras() == 2:
+        if Balon.GetPos()[1] >= 30:
+            if Balon.GetPos()[0] < Paleta5.GetPos()[0]:
+                if Paleta5.GetPos()[0] > 0:
+                    Paleta5.moverBarra(-1)
+                    Paleta6.moverBarra(-1)
+                    time.sleep(Velocidad)
+            if Balon.GetPos()[0] > Paleta6.GetPos()[0] + Paleta6.GetTamano()-1:
+                if Paleta6.GetPos()[0] + Paleta6.GetTamano() < 24:
+                    Paleta5.moverBarra(1)
+                    Paleta6.moverBarra(1)
+                    time.sleep(Velocidad)
 def Timer():
     global thread
     global Time
     while thread:
         Time += 1
         time.sleep(1)
-        print(Time)
+        #print(Time)
 
 
 
@@ -979,6 +1081,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
         nivel(1)#Muestra la pantalla de nivel 1
         while Nivel1: #Nivel 1
             if Game.get_barras() == 1: #Si es con una sola paleta
+                ##ventana1()
                 Puntuacion()
                 MoverBola(0.04)
                 #Se colocan ambas paletas
@@ -1244,12 +1347,12 @@ def LoopObstaculos():
         # Estos dos if definen las posiciones de las paletas
         if Game.get_barras() == 1 and Game.get_nivel() == 1:
             Paleta1.SetPos([8, 0])
-            Paleta2.SetPos([8, 39])
+            Paleta5.SetPos([8, 39])
         if Game.get_barras() == 2 and Game.get_nivel() == 1:
             Paleta1.SetPos([2, 0])
-            Paleta2.SetPos([2, 39])
+            Paleta5.SetPos([2, 39])
             Paleta3.SetPos([14, 0])
-            Paleta4.SetPos([14, 39])
+            Paleta6.SetPos([14, 39])
         Tramp6.borraTramp()
         Tramp7.borraTramp()
         Tramp8.borraTramp()
@@ -1264,14 +1367,14 @@ def LoopObstaculos():
                 MoverBola(0.04)
                 # Se colocan ambas paletas
                 Paleta1.colocarBarra()
-                Paleta2.colocarBarra()
+                Paleta5.colocarBarra()
                 if Game.get_player() == True:  # Si se juega contra la maquina se inicia la funcion de control de maquina
-                    MovimientoCPU(0.055)
+                    MoviCPUPal(0.055)
                 for event in pygame.event.get():  # Toma los eventos de teclas y mouse ademas de posicion de este
                     if event.type == pygame.QUIT:  # Define la utilidad de la x en el juego
                         thread = False
                         Paleta1.SetPos([8, 0])
-                        Paleta2.SetPos([8, 39])
+                        Paleta5.SetPos([8, 39])
                         pygame.quit()
                         quit()
                     elif event.type == pygame.KEYDOWN:  # Detecta cuando se presiona una tecla
@@ -1284,11 +1387,11 @@ def LoopObstaculos():
                             Paleta1.moverBarra(1)
                         if Game.get_player() == False:  # Si se juegan dos jugadores hace lo mismo que las lineas de arribas pero para la
                             # paleta 2
-                            if event.key == pygame.K_UP and Paleta2.GetPos()[0] > 0:
-                                Paleta2.moverBarra(-1)
-                            elif event.key == pygame.K_DOWN and Paleta2.GetPos()[0] * 20 < Height - (
-                                    Paleta2.GetTamano() * 20):
-                                Paleta2.moverBarra(1)
+                            if event.key == pygame.K_UP and Paleta3.GetPos()[0] > 0:
+                                Paleta3.moverBarra(-1)
+                            elif event.key == pygame.K_DOWN and Paleta3.GetPos()[0] * 20 < Height - (
+                                    Paleta3.GetTamano() * 20):
+                                Paleta3.moverBarra(1)
                 Game.winner()  # Detecta los ganadores del nive1 1
                 Colision()
                 ColPal()
@@ -1303,16 +1406,16 @@ def LoopObstaculos():
                 Puntuacion()
                 MoverBola(0.04)
                 Paleta1.colocarBarra()
-                Paleta2.colocarBarra()
+                Paleta5.colocarBarra()
                 Paleta3.colocarBarra()
-                Paleta4.colocarBarra()
+                Paleta6.colocarBarra()
                 if Game.get_player() == True:
-                    MovimientoCPU(0.06)
+                    MoviCPUPal(0.06)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         thread = False
                         Paleta1.SetPos([8, 0])
-                        Paleta2.SetPos([8, 39])
+                        Paleta5.SetPos([8, 39])
                         pygame.quit()
                         quit()
                     elif event.type == pygame.KEYDOWN:
@@ -1323,16 +1426,16 @@ def LoopObstaculos():
                             Paleta1.moverBarra(1)
                             Paleta3.moverBarra(1)
                         if Game.get_player() == False:
-                            if event.key == pygame.K_UP and Paleta2.GetPos()[0] > 0:
-                                Paleta2.moverBarra(-1)
-                                Paleta4.moverBarra(-1)
-                            elif event.key == pygame.K_DOWN and Paleta4.GetPos()[0] * 20 < Height - (
-                                    Paleta4.GetTamano() * 20):
-                                Paleta2.moverBarra(1)
-                                Paleta4.moverBarra(1)
+                            if event.key == pygame.K_UP and Paleta5.GetPos()[0] > 0:
+                                Paleta5.moverBarra(-1)
+                                Paleta6.moverBarra(-1)
+                            elif event.key == pygame.K_DOWN and Paleta6.GetPos()[0] * 20 < Height - (
+                                    Paleta6.GetTamano() * 20):
+                                Paleta6.moverBarra(1)
+                                Paleta5.moverBarra(1)
                 Game.winner()
                 Colision()
-                ColPal()
+                ColPal2()
                 ColTramp()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
@@ -1343,17 +1446,17 @@ def LoopObstaculos():
         Game.restart_Score()  # Reinicia puntuacion para el nivel 2
         if Game.get_nivel() == 2:  # Define el tamaño de las paletas en el nivel 2
             Paleta1.SetTamano(6)
-            Paleta2.SetTamano(6)
+            Paleta5.SetTamano(6)
             Paleta3.SetTamano(6)
-            Paleta4.SetTamano(6)
+            Paleta6.SetTamano(6)
         if Game.get_barras() == 1 and Game.get_nivel() == 2:  # Define las posiciones de las paletas si solo es una por lado
             Paleta1.SetPos([9, 0])
-            Paleta2.SetPos([9, 39])
+            Paleta5.SetPos([9, 39])
         if Game.get_barras() == 2 and Game.get_nivel() == 2:  # Define las posiciones de las paletas si son dos por lado
             Paleta1.SetPos([3, 0])
-            Paleta2.SetPos([3, 39])
+            Paleta5.SetPos([3, 39])
             Paleta3.SetPos([14, 0])
-            Paleta4.SetPos([14, 39])
+            Paleta6.SetPos([14, 39])
         Tramp1.borraTramp()
         Tramp2.borraTramp()
         nivel(2)  # Muestra la pantalla de nivel 2
@@ -1365,14 +1468,14 @@ def LoopObstaculos():
                 Puntuacion()
                 MoverBola(0.04)
                 Paleta1.colocarBarra()
-                Paleta2.colocarBarra()
+                Paleta5.colocarBarra()
                 if Game.get_player() == True:
-                    MovimientoCPU(0.045)
+                    MoviCPUPal(0.045)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         thread = False
                         Paleta1.SetPos([8, 0])
-                        Paleta2.SetPos([8, 39])
+                        Paleta5.SetPos([8, 39])
                         pygame.quit()
                         quit()
                     elif event.type == pygame.KEYDOWN:
@@ -1381,14 +1484,14 @@ def LoopObstaculos():
                         elif event.key == pygame.K_s and Paleta1.GetPos()[0] * 20 < Height - (Paleta1.GetTamano() * 20):
                             Paleta1.moverBarra(1)
                         if Game.get_player() == False:
-                            if event.key == pygame.K_UP and Paleta2.GetPos()[0] > 0:
-                                Paleta2.moverBarra(-1)
-                            elif event.key == pygame.K_DOWN and Paleta2.GetPos()[0] * 20 < Height - (
-                                    Paleta2.GetTamano() * 20):
-                                Paleta2.moverBarra(1)
+                            if event.key == pygame.K_UP and Paleta5.GetPos()[0] > 0:
+                                Paleta5.moverBarra(-1)
+                            elif event.key == pygame.K_DOWN and Paleta5.GetPos()[0] * 20 < Height - (
+                                    Paleta5.GetTamano() * 20):
+                                Paleta5.moverBarra(1)
                 Game.winner()
                 Colision()
-                ColPal()
+                ColPal2()
                 ColTramp()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
@@ -1400,16 +1503,16 @@ def LoopObstaculos():
                 Puntuacion()
                 MoverBola(0.04)
                 Paleta1.colocarBarra()
-                Paleta2.colocarBarra()
+                Paleta5.colocarBarra()
                 Paleta3.colocarBarra()
-                Paleta4.colocarBarra()
+                Paleta6.colocarBarra()
                 if Game.get_player() == True:
-                    MovimientoCPU(0.05)
+                    MoviCPUPal(0.05)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         thread = False
                         Paleta1.SetPos([8, 0])
-                        Paleta2.SetPos([8, 39])
+                        Paleta5.SetPos([8, 39])
                         pygame.quit()
                         quit()
                     elif event.type == pygame.KEYDOWN:
@@ -1420,16 +1523,16 @@ def LoopObstaculos():
                             Paleta1.moverBarra(1)
                             Paleta3.moverBarra(1)
                         if Game.get_player() == False:
-                            if event.key == pygame.K_UP and Paleta2.GetPos()[0] > 0:
-                                Paleta2.moverBarra(-1)
-                                Paleta4.moverBarra(-1)
-                            elif event.key == pygame.K_DOWN and Paleta4.GetPos()[0] * 20 < Height - (
-                                    Paleta4.GetTamano() * 20):
-                                Paleta2.moverBarra(1)
-                                Paleta4.moverBarra(1)
+                            if event.key == pygame.K_UP and Paleta5.GetPos()[0] > 0:
+                                Paleta5.moverBarra(-1)
+                                Paleta6.moverBarra(-1)
+                            elif event.key == pygame.K_DOWN and Paleta6.GetPos()[0] * 20 < Height - (
+                                    Paleta6.GetTamano() * 20):
+                                Paleta5.moverBarra(1)
+                                Paleta6.moverBarra(1)
                 Game.winner()
                 Colision()
-                ColPal()
+                ColPal2()
                 ColTramp()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
@@ -1440,17 +1543,17 @@ def LoopObstaculos():
         Game.restart_Score()
         if Game.get_barras() == 1 and Game.get_nivel() == 3:  # Define las posiciones de las paletas si solo es una por lado
             Paleta1.SetPos([11, 0])
-            Paleta2.SetPos([11, 39])
+            Paleta5.SetPos([11, 39])
         if Game.get_barras() == 2 and Game.get_nivel() == 3:  # Define las posiciones de las paletas si son dos por lado
             Paleta1.SetPos([3, 0])
-            Paleta2.SetPos([3, 39])
+            Paleta5.SetPos([3, 39])
             Paleta3.SetPos([10, 0])
-            Paleta4.SetPos([10, 39])
+            Paleta6.SetPos([10, 39])
         if Game.get_nivel() == 3:  # Define el tamaño de las barras para el nivel 3
             Paleta1.SetTamano(3)
-            Paleta2.SetTamano(3)
+            Paleta5.SetTamano(3)
             Paleta3.SetTamano(3)
-            Paleta4.SetTamano(3)
+            Paleta6.SetTamano(3)
         Tramp3.borraTramp()
         Tramp4.borraTramp()
         Tramp5.borraTramp()
@@ -1464,14 +1567,14 @@ def LoopObstaculos():
                 Puntuacion()
                 MoverBola(0.037)
                 Paleta1.colocarBarra()
-                Paleta2.colocarBarra()
+                Paleta5.colocarBarra()
                 if Game.get_player() == True:
-                    MovimientoCPU(0.035)
+                    MoviCPUPal(0.035)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         thread = False
                         Paleta1.SetPos([8, 0])
-                        Paleta2.SetPos([8, 39])
+                        Paleta5.SetPos([8, 39])
                         pygame.quit()
                         quit()
                     elif event.type == pygame.KEYDOWN:
@@ -1480,14 +1583,14 @@ def LoopObstaculos():
                         elif event.key == pygame.K_s and Paleta1.GetPos()[0] * 20 < Height - (Paleta1.GetTamano() * 20):
                             Paleta1.moverBarra(1)
                         if Game.get_player() == False:
-                            if event.key == pygame.K_UP and Paleta2.GetPos()[0] > 0:
-                                Paleta2.moverBarra(-1)
-                            elif event.key == pygame.K_DOWN and Paleta2.GetPos()[0] * 20 < Height - (
-                                    Paleta2.GetTamano() * 20):
-                                Paleta2.moverBarra(1)
+                            if event.key == pygame.K_UP and Paleta5.GetPos()[0] > 0:
+                                Paleta5.moverBarra(-1)
+                            elif event.key == pygame.K_DOWN and Paleta5.GetPos()[0] * 20 < Height - (
+                                    Paleta5.GetTamano() * 20):
+                                Paleta5.moverBarra(1)
                 Game.winner()
                 Colision()
-                ColPal()
+                ColPal2()
                 ColTramp()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
@@ -1499,16 +1602,16 @@ def LoopObstaculos():
                 Puntuacion()
                 MoverBola(0.037)
                 Paleta1.colocarBarra()
-                Paleta2.colocarBarra()
+                Paleta5.colocarBarra()
                 Paleta3.colocarBarra()
-                Paleta4.colocarBarra()
+                Paleta6.colocarBarra()
                 if Game.get_player() == True:
-                    MovimientoCPU(0.04)
+                    MoviCPUPal(0.04)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         thread = False
                         Paleta1.SetPos([8, 0])
-                        Paleta2.SetPos([8, 39])
+                        Paleta5.SetPos([8, 39])
                         pygame.quit()
                         quit()
                     elif event.type == pygame.KEYDOWN:
@@ -1519,16 +1622,16 @@ def LoopObstaculos():
                             Paleta1.moverBarra(1)
                             Paleta3.moverBarra(1)
                         if Game.get_player() == False:
-                            if event.key == pygame.K_UP and Paleta2.GetPos()[0] > 0:
-                                Paleta2.moverBarra(-1)
-                                Paleta4.moverBarra(-1)
-                            elif event.key == pygame.K_DOWN and Paleta4.GetPos()[0] * 20 < Height - (
-                                    Paleta4.GetTamano() * 20):
-                                Paleta2.moverBarra(1)
-                                Paleta4.moverBarra(1)
+                            if event.key == pygame.K_UP and Paleta5.GetPos()[0] > 0:
+                                Paleta5.moverBarra(-1)
+                                Paleta6.moverBarra(-1)
+                            elif event.key == pygame.K_DOWN and Paleta6.GetPos()[0] * 20 < Height - (
+                                    Paleta6.GetTamano() * 20):
+                                Paleta5.moverBarra(1)
+                                Paleta6.moverBarra(1)
                 Game.winner()
                 Colision()
-                ColPal()
+                ColPal2()
                 ColTramp()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
