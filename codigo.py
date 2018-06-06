@@ -77,7 +77,7 @@ ________________________________________________________________________________
 # creaMatriz()
 
 class Juego:
-    def __init__(self,matriz=Matriz,nivel=1,PVC=True,barras=1,score1=0,score2=0,tamanoMatriz=(25,40)):
+    def __init__(self,matriz=Matriz,nivel=1,PVC=True,barras=1,score1=0,score2=0,tamanoMatriz=(25,40),timer=0):
         self.matriz = matriz
         self.tamanoMatriz= tamanoMatriz
         self.nivel = nivel
@@ -87,6 +87,7 @@ class Juego:
         self.score2 = score2
         self.win1 = 0
         self.win2 = 0
+        self.timer = timer
     def show(self):
         mostrar= ""
         for i in range(self.tamanoMatriz[0]):
@@ -159,6 +160,7 @@ class Juego:
                 return ("Player 1 won")
             elif self.nivel > 3 and self.win2 >= 2:
                 return ("CPU won")
+        
 #_______________________________________________________________________________________________________________________
 
 """Barra"""
@@ -324,6 +326,8 @@ Nivel3= False
 CPU= 1
 
 #Música de fondo del menú
+pygame.mixer.music.load("menu3.mp3")
+pygame.mixer.music.play(20)
 
 #Tamaño de Pantalla
 Width= 800
@@ -361,7 +365,7 @@ Fondo= pygame.image.load("Fondo.jpg")
     root.mainloop()'''
 
 def username(): #Ventana de registro de usuario
-    menu = Tk() 
+    menu = Tk() #Ventana de Tkinter
     menu.title("Usuario")
     label1 = Label(menu,text="Iniciales:")
     label1.grid(row=0,column=0)
@@ -375,37 +379,37 @@ def username(): #Ventana de registro de usuario
         f.close() #Cierra el archivo
         messagebox.showinfo("","Registrado correctamente")
         menu.destroy() #Cierra la ventana de registro
-    entry1.grid(row=0,column=1)
+    entry1.grid(row=0,column=1) 
     boton1= Button(menu,text="Ingresar",command=register)
     boton1.grid(row=0,column=2)
     menu.mainloop()
-def tabla():
-    tabla1=Tk()
+    
+def tabla(): #Ventana de la tabla de puntuaciones
+    tabla1=Tk() #Ventana de Tkinter
     tabla1.title("Tabla de puntuaciones")
     tabla1.maxsize(200,200)
-    Cv2= Canvas(tabla1, width= 800, height= 600, bg="#203864" )
-    Cv2.place(x=-2,y=-1)
-    def ff():
+    Cv2= Canvas(tabla1, width= 800, height= 600, bg="#203864" ) #Canvas
+    Cv2.place(x=-2,y=-1)    
+    def ff(): #Función que lee y devuelve en tabla lo que contiene el archivo de texto
         df = pd.read_csv("1.txt", sep=" ", header=None, names=["Usuario", "Puntos"])
         return df
-
-    df = StringVar()
-
+    df = StringVar() #Variable del archivo
     label1=Label(tabla1,textvariable=df,height=15,width=80,justify=LEFT,font=("Times New Roman","10"),bg="#203864", fg= "white")
     df.set(ff())
     label1.pack()
     tabla1.mainloop()
-def muestreMatriz():
-    ventana= Tk()
+    
+def muestreMatriz(): #Función que muestre la matrix en una ventana
+    ventana= Tk() #Ventana Tkinter
     ventana.title("Pausa")
     ventana.minsize(980, 550)
     ventana.maxsize(980, 550)
     ventana.resizable(width= NO, height= NO)
-    Cv= Canvas(ventana, width= 980, height= 550, bg="#203864" )
+    Cv= Canvas(ventana, width= 980, height= 550, bg="#203864" ) #Canvas
     Cv.place(x=-1,y=-1)
     Matrix= Label(Cv, text = Game.show(), bg="#203864", fg= "white")
     Matrix.place(x=0,y=2)
-    def quitarPausa():
+    def quitarPausa(): #Quita la pausa al juego y cierra la ventana de la matriz
         global thread
         thread = True
         Cronometro = Thread(target=Timer)
@@ -414,9 +418,11 @@ def muestreMatriz():
     Volver= Button(Cv, text= "Volver", command= quitarPausa)
     Volver.place(x=10,y=460)
     ventana.mainloop()
+    
 def ObjetosTexto(text, font): #Renderiza los textos con el color y su fuente
     SuperficieTexto = font.render(text, True, White)
     return SuperficieTexto, SuperficieTexto.get_rect()
+
 def Boton(msg,x,y,w,h,ic,ac,command= None): #Define Botones
     global Inicio
     global Mode
@@ -433,80 +439,80 @@ def Boton(msg,x,y,w,h,ic,ac,command= None): #Define Botones
     if x+w > mouse[0] > x and y+h > mouse[1] > y: #Comprueba que la posicion del mouse este dentro del boton
         pygame.draw.rect(root, ac,(x,y,w,h))
         #Estas siguientes lineas definen las distintas acciones dependiendo del boton
-        if click[0] == 1 and command == "PVC":
+        if click[0] == 1 and command == "PVC": #Botón de modo un jugador
             Game.set_player(True)
             Inicio = False
             time.sleep(0.2)
             Mode = True
             Modo()
-        elif click[0] == 1 and command == "PVP":
+        elif click[0] == 1 and command == "PVP": #Botón de modo dos jugadores
             Game.set_player(False)
             Inicio = False
             time.sleep(0.2)
             Mode = True
             Modo()
-        elif click[0] == 1 and command == "Pract":
+        elif click[0] == 1 and command == "Pract": #Botón de modo Práctica
             Inicio = False
             time.sleep(0.2)
             Mode2 = True
             Modo2()
-        elif click[0] == 1 and command == "Punt":
+        elif click[0] == 1 and command == "Punt": #Botón de la tabal de puntuaciones
             tabla()
-        elif click[0] == 1 and command == "1PA":
+        elif click[0] == 1 and command == "1PA": #Botón de selección 1 paleta
             Game.set_barras(1)
             Mode = False
             Mode3 = True
             time.sleep(0.2)
             selectTrampolin()
-        elif click[0] == 1 and command == "2PA":
+        elif click[0] == 1 and command == "2PA": #Botón de selección 2 paletas
             Game.set_barras(2)
             Mode = False
             Mode3= True
             time.sleep(0.2)
             selectTrampolin()
-        elif click[0] == 1 and command == "Trampolin":
+        elif click[0] == 1 and command == "Trampolin": #Botón de selección trampolines
             Mode3 = False
             Cronometro.start()
             LoopObstaculos()
-        elif click[0] == 1 and command == "Normal":
+        elif click[0] == 1 and command == "Normal": #Botón de selección de partida sin trampolines
             Mode3 = False
             Cronometro.start()
             mainloop()
-        elif click[0] == 1 and command == "1PA1":
+        elif click[0] == 1 and command == "1PA1": #Botón de 1 paleta modo práctica
             Game.set_barras(1)
             Mode2 = False
             Mode4 = True
             time.sleep(0.2)
             selectNivel()
-        elif click[0] == 1 and command == "2PA1":
+        elif click[0] == 1 and command == "2PA1": #Botón de 2 paletas modo práctica
             Game.set_barras(2)
             Mode2 = False
             Mode4 = True
             time.sleep(0.2)
             selectNivel()
             
-        elif click[0] == 1 and command == "N1":
+        elif click[0] == 1 and command == "N1": #Botón nivel 1 modo práctica
             Game.set_nivel(1)
             Mode4 = False
             modop()
-        elif click[0] == 1 and command == "N2":
+        elif click[0] == 1 and command == "N2": #Botón nivel 2 modo práctica
             Game.set_nivel(2)
             Mode4 = False
             modop()
-        elif click[0] == 1 and command == "N3":
+        elif click[0] == 1 and command == "N3": #Botón nivel 3 modo práctica
             Game.set_nivel(3)
             Mode4 = False
             modop()
-        elif click[0] == 1 and command == "Restart":
+        elif click[0] == 1 and command == "Restart": #Botón que devuelve al menú principal
             Winner = False
             Inicio= True
             Nivel1= True
             Game.restartGameAux()
             mainMenu()
-        elif click[0] == 1 and command == "Pause":
+        elif click[0] == 1 and command == "Pause": #Botón que pausa el juego y muestra la matriz
             thread= False
             muestreMatriz()
-        elif click[0] == 1 and command == "Quit":
+        elif click[0] == 1 and command == "Quit": #Botón que cierra el juego
             Winner = False
             pygame.quit()
             quit()
@@ -535,7 +541,7 @@ def Puntuaciones(texto,lado): #Muestra las puntuaciones en la pantalla y recibe 
 def TimerVis(texto,lado):
     smallText = pygame.font.Font('freesansbold.ttf',40)
     TextSurf, TextRect = ObjetosTexto(texto, smallText)
-    TextRect.center = ((Height/15)*lado,(Width/0))
+    TextRect.center = ((Height/15)*lado,(Width/10))
     root.blit(TextSurf, TextRect)
     pygame.display.update()
 def Mensajes(texto): #Recibe un texto y lo convierte en un mensaje en pantalla
@@ -551,30 +557,36 @@ def ColPract():    #Colisión en paredes para el modo práctica
     global VectorBolay
     global VectorBolax
     Posicion= Balon.GetPos()
-    PosPa1= Paleta1.GetPos()
-    PosPa3 = Paleta3.GetPos()
     if Posicion[0] == 0: #Si toca en el techo invierte el desplazamiento
         VectorBolay *= -1
+        pygame.mixer.music.load("golpe.mp3") #Sonido de golpe
+        pygame.mixer.music.play(1)
     elif Posicion[0] == 24: #Si toca el suelo invierte el desplazamiento
         VectorBolay *= -1
+        pygame.mixer.music.load("golpe.mp3") #Sonido de golpe
+        pygame.mixer.music.play(1)
     elif Posicion[1] == 39:
         VectorBolax *=-1
-    elif Posicion[1]==0:
+        pygame.mixer.music.load("golpe.mp3") #Sonido de golpe
+        pygame.mixer.music.play(1)
+    elif Posicion[1]==0: #Si toca pared lado derecho invierte desplazamiento
         Balon.posInicial()
         VectorBolax *= -1
         VectorBolay *= -1
+        pygame.mixer.music.load("golpe.mp3") #Sonido de golpe
+        pygame.mixer.music.play(1)
 def Colision(): #Define las coliciones con las distintas paredes
     global VectorBolay
     global VectorBolax
     Posicion= Balon.GetPos()
-    PosPa1= Paleta1.GetPos()
-    PosPa2 = Paleta2.GetPos()
-    PosPa3 = Paleta3.GetPos()
-    PosPa4 = Paleta4.GetPos()
     if Posicion[0] == 0: #Si toca en el techo invierte el desplazamiento
         VectorBolay *= -1
+        pygame.mixer.music.load("golpe.mp3") #Sonido de golpe
+        pygame.mixer.music.play(1)
     elif Posicion[0] == 24: #Si toca el suelo invierte el desplazamiento
         VectorBolay *= -1
+        pygame.mixer.music.load("golpe.mp3") #Sonido de golpe
+        pygame.mixer.music.play(1)
 def ColPal2():  #Colisión paletas para modo práctica
     global VectorBolay
     global VectorBolax
@@ -584,37 +596,55 @@ def ColPal2():  #Colisión paletas para modo práctica
     if Game.get_barras() == 1:# Si la cantidad de paletas es 1
         #PALETA 1_____________________________________________________________
         #Define las coliciones con la paleta, ya sea que choque en la parte superior de la paleta, la del medio o la inferior
-        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/2 > Posicion[0] >= PosPa1[0]:
+        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/3 > Posicion[0] >= PosPa1[0]:
             VectorBolax = 1
             VectorBolay = -1
-        #if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
-            #VectorBolax = 1
-            #VectorBolay = 0
-        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/2:
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
+        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
+            VectorBolax = 1
+            VectorBolay = 0
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
+        if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+(Paleta1.GetTamano()*2)/3:
             VectorBolax= 1
             VectorBolay= 1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
     if Game.get_barras() == 2: #Si hay 2 paletas por lado
         #PALETA 1______________________________________________________________
         # Define las coliciones con la paleta, ya sea que choque en la parte superior de la paleta, la del medio o la inferior
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/3 > Posicion[0] >= PosPa1[0]:
             VectorBolax = 1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
             VectorBolax = 1
             VectorBolay = 0
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+(Paleta1.GetTamano()*2)/3:
             VectorBolax= 1
             VectorBolay= 1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         #PALETA 3_____________________________________________________________________________________________
         if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+Paleta3.GetTamano()/3 > Posicion[0] >= PosPa3[0]:
             VectorBolax = 1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+(Paleta3.GetTamano()*2)/3 > Posicion[0] >= PosPa3[0]+Paleta3.GetTamano()/3:
             VectorBolax = 1
             VectorBolay = 0
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+Paleta3.GetTamano() > Posicion[0] >= PosPa3[0]+(Paleta3.GetTamano()*2)/3:
             VectorBolax= 1
             VectorBolay= 1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
 def ColPal():   #Define la colisión con las paletas
     global VectorBolay
     global VectorBolax
@@ -631,66 +661,102 @@ def ColPal():   #Define la colisión con las paletas
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/3 > Posicion[0] >= PosPa1[0]:
             VectorBolax = 1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
             VectorBolax = 1
             VectorBolay = 0
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+(Paleta1.GetTamano()*2)/3:
             VectorBolax= 1
             VectorBolay= 1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         #PALETA 2_____________________________________________________________
         if Posicion[1] == PosPa2[1]-1 and PosPa2[0]+Paleta2.GetTamano()/3 > Posicion[0] >= PosPa2[0]:
             VectorBolax = -1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa2[1]-1 and PosPa2[0]+(Paleta2.GetTamano()*2)/3 > Posicion[0] >= PosPa2[0]+Paleta2.GetTamano()/3:
             VectorBolax = -1
             VectorBolay = 0
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa2[1]-1 and PosPa2[0]+Paleta2.GetTamano() > Posicion[0] >= PosPa2[0]+(Paleta2.GetTamano()*2)/3:
             VectorBolax= -1
             VectorBolay= 1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
     if Game.get_barras() == 2: #Si hay 2 paletas por lado
         #PALETA 1______________________________________________________________
         # Define las coliciones con la paleta, ya sea que choque en la parte superior de la paleta, la del medio o la inferior
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/3 > Posicion[0] >= PosPa1[0]:
             VectorBolax = 1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
             VectorBolax = 1
             VectorBolay = 0
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+(Paleta1.GetTamano()*2)/3:
             VectorBolax= 1
             VectorBolay= 1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         #PALETA 2_____________________________________________________________
         if Posicion[1] == PosPa2[1]-1 and PosPa2[0]+Paleta2.GetTamano()/3 > Posicion[0] >= PosPa2[0]:
             VectorBolax = -1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa2[1]-1 and PosPa2[0]+(Paleta2.GetTamano()*2)/3 > Posicion[0] >= PosPa2[0]+Paleta2.GetTamano()/3:
             VectorBolax = -1
             VectorBolay = 0
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa2[1]-1 and PosPa2[0]+Paleta2.GetTamano() > Posicion[0] >= PosPa2[0]+(Paleta2.GetTamano()*2)/3:
             VectorBolax= -1
             VectorBolay= 1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         #PALETA 3_____________________________________________________________________________________________
         if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+Paleta3.GetTamano()/3 > Posicion[0] >= PosPa3[0]:
             VectorBolax = 1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+(Paleta3.GetTamano()*2)/3 > Posicion[0] >= PosPa3[0]+Paleta3.GetTamano()/3:
             VectorBolax = 1
             VectorBolay = 0
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+Paleta3.GetTamano() > Posicion[0] >= PosPa3[0]+(Paleta3.GetTamano()*2)/3:
             VectorBolax= 1
             VectorBolay= 1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         #PALETA 4_____________________________________________________________
         if Posicion[1] == PosPa4[1]-1 and PosPa4[0]+Paleta4.GetTamano()/3 > Posicion[0] >= PosPa4[0]:
             VectorBolax = -1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa4[1]-1 and PosPa4[0]+(Paleta4.GetTamano()*2)/3 > Posicion[0] >= PosPa4[0]+Paleta4.GetTamano()/3:
             VectorBolax = -1                            
             VectorBolay = 0
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa4[1]-1 and PosPa4[0]+Paleta4.GetTamano() > Posicion[0] >= PosPa4[0]+(Paleta4.GetTamano()*2)/3:
             VectorBolax= -1
             VectorBolay= 1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
 
-def ColPal2():   #Define la colisión con las paletas
+def ColPal3():   #Define la colisión con las paletas con los trampolines activados
     global VectorBolay
     global VectorBolax
     Posicion= Balon.GetPos()
@@ -704,56 +770,87 @@ def ColPal2():   #Define la colisión con las paletas
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/3 > Posicion[0] >= PosPa1[0]:
             VectorBolax = 1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
             VectorBolax = 1
             VectorBolay = 0
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+(Paleta1.GetTamano()*2)/3:
             VectorBolax= 1
             VectorBolay= 1
-        #PALETA5
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
+        #PALETA 5_______________________________________________________________
         if Posicion[1] == PosPa5[1]-1 and PosPa5[0]+Paleta5.GetTamano()/2 > Posicion[0] >= PosPa5[0]:
             VectorBolax = -1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa5[1]-1 and PosPa5[0]+Paleta5.GetTamano() > Posicion[0] >= PosPa5[0]+Paleta5.GetTamano()/2:
             VectorBolax= -1
             VectorBolay= 1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
     if Game.get_barras() == 2: #Si hay 2 paletas por lado
         #PALETA 1______________________________________________________________
         # Define las coliciones con la paleta, ya sea que choque en la parte superior de la paleta, la del medio o la inferior
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano()/3 > Posicion[0] >= PosPa1[0]:
             VectorBolax = 1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+(Paleta1.GetTamano()*2)/3 > Posicion[0] >= PosPa1[0]+Paleta1.GetTamano()/3:
             VectorBolax = 1
             VectorBolay = 0
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa1[1]+1 and PosPa1[0]+Paleta1.GetTamano() > Posicion[0] >= PosPa1[0]+(Paleta1.GetTamano()*2)/3:
             VectorBolax= 1
             VectorBolay= 1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         #PALETA 3_____________________________________________________________________________________________
         if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+Paleta3.GetTamano()/3 > Posicion[0] >= PosPa3[0]:
             VectorBolax = 1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+(Paleta3.GetTamano()*2)/3 > Posicion[0] >= PosPa3[0]+Paleta3.GetTamano()/3:
             VectorBolax = 1
             VectorBolay = 0
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa3[1]+1 and PosPa3[0]+Paleta3.GetTamano() > Posicion[0] >= PosPa3[0]+(Paleta3.GetTamano()*2)/3:
             VectorBolax= 1
             VectorBolay= 1
-        #PALETA5
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
+        #PALETA5________________________________________________________________________________________
         if Posicion[1] == PosPa5[1]-1 and PosPa5[0]+Paleta5.GetTamano()/2 > Posicion[0] >= PosPa1[0]:
             VectorBolax = -1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa5[1]-1 and PosPa5[0]+Paleta5.GetTamano() > Posicion[0] >= PosPa5[0]+Paleta5.GetTamano()/2:
             VectorBolax= -1
             VectorBolay= 1
-        #PALETA6
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
+        #PALETA6_________________________________________________________________________________________
         if Posicion[1] == PosPa6[1]-1 and PosPa6[0]+Paleta6.GetTamano()/2 > Posicion[0] >= PosPa6[0]:
             VectorBolax = -1
             VectorBolay = -1
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
         if Posicion[1] == PosPa6[1]-1 and PosPa6[0]+Paleta6.GetTamano() > Posicion[0] >= PosPa6[0]+Paleta6.GetTamano()/2:
             VectorBolax= -1
             VectorBolay= 1
-def ColTramp():
+            pygame.mixer.music.load("Golpe 4.mp3") #Sonido de golpe
+            pygame.mixer.music.play(1)
+            
+def ColTramp(): #Colisión de los trampolines
     global VectorBolay
     global VectorBolax
     Pos= Balon.GetPos()
@@ -821,6 +918,13 @@ def Puntuacion(): #Suma las puntuaciones a cada lado y regresa la bola al centro
         VectorBolay *= -1
     Puntuaciones(str(Game.get_score1()),7)
     Puntuaciones(str(Game.get_score2()),9)
+'''def Timer():
+    global thread
+    while thread==True:
+        Game.set_timer()
+        time.sleep(1)
+    TimerVis(str(Game.get_timer()),5)'''
+    
 def Win(): #Aumenta cada nivel y al final dice quien ganó la partida
     global Nivel1
     global Nivel2
@@ -842,7 +946,8 @@ def Win(): #Aumenta cada nivel y al final dice quien ganó la partida
         GameOver()
         username()
         Cronometro.stop()
-def mainMenu():
+        
+def mainMenu(): #Define objetos en el menú principal
     while Inicio:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -856,7 +961,8 @@ def mainMenu():
         boton20= Boton("Puntuaciones",15,450,150,35,LightGrey,Grey,"Punt")
         pygame.display.update()
         fps.tick(60)
-def Modo(): #Crea pantalla para escoger 1 jugador o dos jugadores
+        
+def Modo(): #Crea pantalla para escoger 1 o 2 paletas
     while Mode:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -868,7 +974,8 @@ def Modo(): #Crea pantalla para escoger 1 jugador o dos jugadores
         Boton4 = Boton("1 Paleta", 355, 240, 100, 50, LightGrey, Grey, "1PA")
         pygame.display.update()
         fps.tick(60)
-def Modo2():
+        
+def Modo2(): #Pantalla de elección de paletas modo práctica
     while Mode2:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -880,7 +987,8 @@ def Modo2():
         Boton7 = Boton("1 Paleta", 355, 240, 100, 50, LightGrey, Grey, "1PA1")
         pygame.display.update()
         fps.tick(60)
-def selectTrampolin():
+        
+def selectTrampolin(): #Pantalla de elección de trampolines
     while Mode3:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -892,7 +1000,8 @@ def selectTrampolin():
         Boton9 = Boton("Trampolines", 345, 310, 120, 50, LightGrey, Grey, "Trampolin")
         pygame.display.update()
         fps.tick(60)
-def selectNivel():
+        
+def selectNivel(): #Pantalla de elección de nivel en el modo práctica
     while Mode4:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -905,6 +1014,7 @@ def selectNivel():
         Boton12= Boton("Nivel3",355,350,100,50, LightGrey, Grey,"N3")
         pygame.display.update()
         fps.tick(60)
+        
 def GameOver(): #Crea una pantalla que indica el final del juego y tiene un boton de reiniciar y uno de cerrar el juego
     if Game.game_over() != "CPU won":
         username()
@@ -920,12 +1030,14 @@ def GameOver(): #Crea una pantalla que indica el final del juego y tiene un boto
         Boton2 = Boton("Quit", 600, 400, 100, 50, LightGrey, Grey, "Quit")
         pygame.display.update()
         fps.tick(60)
+        
 def nivel(Nivel): #Crea una pantalla cada vez que se inicia un nivel indicando cual es
     root.fill(Blue)
     Mensajes("Nivel "+str(Nivel))
     pygame.display.update()
     fps.tick(60)
     time.sleep(2)
+    
 def MovimientoCPU(Velocidad): #Define el movimiento de la computadora al jugar en modo 1 jugador y mientras menor sea el argumento
     #Velocidad mayor será la velocidad de la barra
     if Game.get_barras()== 1:
@@ -950,7 +1062,10 @@ def MovimientoCPU(Velocidad): #Define el movimiento de la computadora al jugar e
                     Paleta2.moverBarra(1)
                     Paleta4.moverBarra(1)
                     time.sleep(Velocidad)
-def MoviCPUPal(Velocidad):
+
+#Movimineto CPU con trampolines                    
+def MoviCPUPal(Velocidad):#Define el movimiento de la computadora al jugar en modo 1 jugador y mientras menor sea el argumento
+    #Velocidad mayor será la velocidad de la barra
     if Game.get_barras()== 1:
         if Balon.GetPos()[1] >= 30:
             if Balon.GetPos()[0] < Paleta5.GetPos()[0]:
@@ -976,10 +1091,11 @@ def MoviCPUPal(Velocidad):
 def Timer():
     global thread
     global Time
-    while thread:
+    if thread==True:
         Time += 1
         time.sleep(1)
-        #print(Time)
+        TimerVis(str(Time),5)
+    fps.tick(60)
 
 
 
@@ -1002,7 +1118,6 @@ def modop():#Modo Práctica
             Paleta3.SetTamano(9)
             MoverBola(0.04)
         if Game.get_nivel()==2:
-
             Paleta1.SetTamano(6)
             Paleta3.SetTamano(6)
             MoverBola(0.03)
@@ -1062,7 +1177,8 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
     global CPU
     global thread
     while not Winner:
-        #Para la música al salirse del menú
+        Cronometro = Thread(target=Timer)
+        pygame.mixer.music.stop() #Para la música al salirse del menú
         #Estos dos if definen las posiciones de las paletas
         if Game.get_nivel()==1: #Define el tamaño de las paletas en el nivel 2
             Paleta1.SetTamano(9)
@@ -1110,6 +1226,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                                 Paleta2.moverBarra(-1)
                             elif event.key == pygame.K_DOWN and Paleta2.GetPos()[0] * 20 < Height- (Paleta2.GetTamano() * 20):
                                 Paleta2.moverBarra(1)
+                                
                 Game.winner() #Detecta los ganadores del nive1 1
                 Colision()
                 ColPal()
@@ -1119,6 +1236,7 @@ def mainloop(): #Loop principal que maneja la mayoria del juego
                 Pausa = Boton("Inspector", 600, 440, 95, 30, LightGrey, Grey, "Pause")
                 pygame.display.update() #Actualiza la página
                 fps.tick(60) #Define la velocidad del reloj interno del juego
+                Timer()
             elif Game.get_barras() == 2: #Es lo mismo que la parte superior excepto porque es con dos barras
                 Puntuacion()
                 MoverBola(0.04)
@@ -1343,7 +1461,7 @@ def LoopObstaculos():
     global CPU
     global thread
     while not Winner:
-        # Para la música al salirse del menú
+        pygame.mixer.music.stop() #Para la música al salirse del menú
         # Estos dos if definen las posiciones de las paletas
         if Game.get_barras() == 1 and Game.get_nivel() == 1:
             Paleta1.SetPos([8, 0])
@@ -1394,7 +1512,7 @@ def LoopObstaculos():
                                 Paleta3.moverBarra(1)
                 Game.winner()  # Detecta los ganadores del nive1 1
                 Colision()
-                ColPal()
+                ColPal3()
                 ColTramp()
                 root.blit(Fondo, (0, 0))  # Coloca el fondo
                 VisualObjetos()  # Muestra los objetos
@@ -1435,7 +1553,7 @@ def LoopObstaculos():
                                 Paleta5.moverBarra(1)
                 Game.winner()
                 Colision()
-                ColPal2()
+                ColPal3()
                 ColTramp()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
@@ -1491,7 +1609,7 @@ def LoopObstaculos():
                                 Paleta5.moverBarra(1)
                 Game.winner()
                 Colision()
-                ColPal2()
+                ColPal3()
                 ColTramp()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
@@ -1532,7 +1650,7 @@ def LoopObstaculos():
                                 Paleta6.moverBarra(1)
                 Game.winner()
                 Colision()
-                ColPal2()
+                ColPal3()
                 ColTramp()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
@@ -1590,7 +1708,7 @@ def LoopObstaculos():
                                 Paleta5.moverBarra(1)
                 Game.winner()
                 Colision()
-                ColPal2()
+                ColPal3()
                 ColTramp()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
@@ -1631,7 +1749,7 @@ def LoopObstaculos():
                                 Paleta6.moverBarra(1)
                 Game.winner()
                 Colision()
-                ColPal2()
+                ColPal3()
                 ColTramp()
                 root.blit(Fondo, (0, 0))
                 VisualObjetos()
